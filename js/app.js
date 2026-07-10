@@ -6,7 +6,8 @@ const appState = {
     day: "",
     category: "",
     part: "",
-    location: ""
+    location: "",
+    tag: ""
   }
 };
 

@@ -110,6 +110,7 @@ function renderProgramFilters() {
       ${filterSelect("category", "Categorie", options.categories, appState.filters.category)}
       ${filterSelect("part", "Festivalonderdeel", options.parts, appState.filters.part)}
       ${filterSelect("location", "Locatie", options.locations, appState.filters.location)}
+      ${filterSelect("tag", "Tag", options.tags, appState.filters.tag)}
     </form>
   `;
 }
@@ -164,14 +165,15 @@ function getFilteredProgramma() {
     const matchesQuery =
       !query ||
       [
-        item.title,
-        item.shortDescription,
-        item.description,
-        category,
-        part,
-        location,
-        day,
-        item.date
+      item.title,
+      item.shortDescription,
+      item.description,
+      category,
+      part,
+      location,
+      day,
+      item.date,
+      item.tags
       ].some((value) => normalizeSearchValue(value).includes(query));
 
     const matchesDay = !appState.filters.day || day === appState.filters.day;
@@ -181,13 +183,20 @@ function getFilteredProgramma() {
       !appState.filters.part || part === appState.filters.part;
     const matchesLocation =
       !appState.filters.location || location === appState.filters.location;
+    const itemTags = String(item.tags || "")
+      .split(",")
+      .map((tag) => tag.trim());
+
+    const matchesTag =
+      !appState.filters.tag || itemTags.includes(appState.filters.tag);
 
     return (
       matchesQuery &&
       matchesDay &&
       matchesCategory &&
       matchesPart &&
-      matchesLocation
+      matchesLocation &&
+      matchesTag
     );
   })
   .sort(compareProgramItems);
@@ -247,11 +256,19 @@ function parseProgramTime(value) {
 }
 
 function getProgramFilterOptions() {
+  const tags = store.programma.flatMap((item) =>
+    String(item.tags || "")
+      .split(",")
+      .map((tag) => tag.trim())
+      .filter(Boolean)
+  );
+
   return {
     days: uniqueSorted(store.programma.map(programDay)),
     categories: uniqueSorted(store.programma.map(programCategory)),
     parts: uniqueSorted(store.programma.map(programPart)),
-    locations: uniqueSorted(store.programma.map(programLocation))
+    locations: uniqueSorted(store.programma.map(programLocation)),
+    tags: uniqueSorted(tags)
   };
 }
 
@@ -275,7 +292,8 @@ function hasActiveProgramFilters() {
       appState.filters.day ||
       appState.filters.category ||
       appState.filters.part ||
-      appState.filters.location
+      appState.filters.location ||
+      appState.filters.tag
   );
 }
 
@@ -354,6 +372,10 @@ function renderProgramDetail() {
   const description = item.description || item.shortDescription || "Meer informatie volgt.";
   const colorClass = categoryColorClassFromItem(item);
   const websiteUrl = safeExternalUrl(item.websiteUrl);
+  const tags = String(item.tags || "")
+    .split(",")
+    .map((tag) => tag.trim())
+    .filter(Boolean);
 
   return `
     <section class="screen">
@@ -392,6 +414,15 @@ function renderProgramDetail() {
                    <span class="detail-fact-icon" data-icon="compass"></span>
                    <span>Onderdeel van ${escapeHtml(part)}</span>
                  </div>`
+              : ""
+          }
+
+          ${
+            tags.length
+              ? `<div class="detail-fact">
+                  <span class="detail-fact-icon" data-icon="tag"></span>
+                  <span>${tags.map((tag) => escapeHtml(tag)).join(" • ")}</span>
+                </div>`
               : ""
           }
 
