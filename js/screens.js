@@ -154,7 +154,8 @@ function renderProgramCards(items) {
 function getFilteredProgramma() {
   const query = normalizeSearchValue(appState.searchQuery);
 
-  return store.programma.filter((item) => {
+ return store.programma
+    .filter((item) => {
     const day = programDay(item);
     const category = programCategory(item);
     const part = programPart(item);
@@ -188,7 +189,61 @@ function getFilteredProgramma() {
       matchesPart &&
       matchesLocation
     );
-  });
+  })
+  .sort(compareProgramItems);
+}
+
+function compareProgramItems(a, b) {
+  const dateA = parseProgramDate(a.day || a.date);
+  const dateB = parseProgramDate(b.day || b.date);
+  const dateComparison = dateA - dateB;
+
+  if (dateComparison !== 0) {
+    return dateComparison;
+  }
+
+  const timeComparison =
+    parseProgramTime(a.startTime) - parseProgramTime(b.startTime);
+
+  if (timeComparison !== 0) {
+    return timeComparison;
+  }
+
+  return String(a.title || "").localeCompare(
+    String(b.title || ""),
+    "nl",
+    { sensitivity: "base" }
+  );
+}
+
+function parseProgramDate(value) {
+  const text = String(value || "").trim();
+
+  if (!text) {
+    return Number.MAX_SAFE_INTEGER;
+  }
+
+  const dutchDate = text.match(/^(\d{1,2})[-/](\d{1,2})[-/](\d{4})$/);
+
+  if (dutchDate) {
+    const [, day, month, year] = dutchDate;
+    return new Date(Number(year), Number(month) - 1, Number(day)).getTime();
+  }
+
+  const parsed = Date.parse(text);
+
+  return Number.isNaN(parsed) ? Number.MAX_SAFE_INTEGER : parsed;
+}
+
+function parseProgramTime(value) {
+  const text = String(value || "").trim();
+  const match = text.match(/^(\d{1,2}):(\d{2})/);
+
+  if (!match) {
+    return Number.MAX_SAFE_INTEGER;
+  }
+
+  return Number(match[1]) * 60 + Number(match[2]);
 }
 
 function getProgramFilterOptions() {
