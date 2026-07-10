@@ -1,0 +1,35 @@
+:root {
+  --kleur-blauw: #3560A9;
+  --kleur-paars: #683186;
+  --kleur-magenta: #C11B5D;
+  --kleur-oranje: #E84E22;
+  --kleur-geel: #FFD43C;
+  --kleur-donkergrijs: #727271;
+
+  --kleur-achtergrond: #F8F6F2;
+  --kleur-wit: #FFFFFF;
+  --kleur-tekst: #2F2F2F;
+  --kleur-subtekst: #67635F;
+  --kleur-lijn: #E4DDD4;
+  --kleur-zacht: #FFFDF9;
+
+  --accent: var(--kleur-magenta);
+  --accent-zacht: rgba(193, 27, 93, 0.10);
+
+  --radius-klein: 12px;
+  --radius: 20px;
+  --radius-groot: 26px;
+
+  --schaduw-zacht: 0 8px 24px rgba(0, 0, 0, 0.065);
+  --schaduw-nav: 0 -6px 20px rgba(0, 0, 0, 0.07);
+
+  --ruimte-xs: 6px;
+  --ruimte-s: 12px;
+  --ruimte-m: 20px;
+  --ruimte-l: 32px;
+  --ruimte-xl: 48px;
+
+  --max-breedte: 860px;
+  --content-breedte: 620px;
+  --nav-hoogte: 76px;
+}
