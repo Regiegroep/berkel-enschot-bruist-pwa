@@ -83,6 +83,8 @@ function setupCurrentScreenInteractions() {
 function setupProgramInteractions() {
   const searchInput = document.getElementById("search-program");
   const filterForm = document.getElementById("program-filters");
+  const filterToggle = document.getElementById("toggle-program-filters");
+  const filterPanel = document.getElementById("program-filter-panel");
   const resetButton = document.getElementById("reset-filters");
 
   if (searchInput) {
@@ -91,6 +93,16 @@ function setupProgramInteractions() {
     searchInput.addEventListener("input", (event) => {
       appState.searchQuery = event.target.value;
       renderProgramResultsOnly();
+      updateProgramFilterControls();
+    });
+  }
+
+  if (filterToggle && filterPanel) {
+    filterToggle.addEventListener("click", () => {
+      const willOpen = filterPanel.hidden;
+
+      filterPanel.hidden = !willOpen;
+      filterToggle.setAttribute("aria-expanded", String(willOpen));
     });
   }
 
@@ -101,6 +113,7 @@ function setupProgramInteractions() {
       if (target.matches("[data-filter]")) {
         appState.filters[target.dataset.filter] = target.value;
         renderProgramResultsOnly();
+        updateProgramFilterControls();
       }
     });
   }
@@ -112,11 +125,27 @@ function setupProgramInteractions() {
         day: "",
         category: "",
         part: "",
-        location: ""
+        location: "",
+        tag: ""
       };
 
       navigateTo("programma");
     });
+  }
+}
+
+function updateProgramFilterControls() {
+  const filterToggle = document.getElementById("toggle-program-filters");
+  const resetButton = document.getElementById("reset-filters");
+  const activeFilterCount = activeProgramFilterCount();
+
+  if (filterToggle) {
+    filterToggle.textContent =
+      `Filters${activeFilterCount ? ` (${activeFilterCount})` : ""}`;
+  }
+
+  if (resetButton) {
+    resetButton.hidden = !hasActiveProgramFilters();
   }
 }
 

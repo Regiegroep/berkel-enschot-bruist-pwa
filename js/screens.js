@@ -45,6 +45,16 @@ function renderHome() {
   `;
 }
 
+function activeProgramFilterCount() {
+  return [
+    appState.filters.day,
+    appState.filters.category,
+    appState.filters.part,
+    appState.filters.location,
+    appState.filters.tag
+  ].filter(Boolean).length;
+}
+
 function renderProgramma() {
   if (store.loading) {
     return `
@@ -65,33 +75,57 @@ function renderProgramma() {
   }
 
   const filtered = getFilteredProgramma();
+  const activeFilterCount = activeProgramFilterCount();
 
   return `
-    <section class="screen">
+    <section class="screen program-screen">
       ${screenHeader("Programma", "Zoek en filter in het actuele programma.")}
 
-      <div class="search-block">
-        <label for="search-program">Zoeken</label>
-        <input
-          id="search-program"
-          type="search"
-          placeholder="Titel, omschrijving, locatie of categorie"
-          value="${escapeAttribute(appState.searchQuery)}"
-        >
-      </div>
+      <div class="program-toolbar">
+        <div class="program-toolbar-row">
+          <button
+            type="button"
+            class="filter-toggle-button"
+            id="toggle-program-filters"
+            aria-expanded="false"
+            aria-controls="program-filter-panel"
+          >
+            Filters${activeFilterCount ? ` (${activeFilterCount})` : ""}
+          </button>
 
-      ${renderProgramFilters()}
+          <div class="program-search">
+            <label class="visually-hidden" for="search-program">Zoeken</label>
+            <input
+              id="search-program"
+              type="search"
+              placeholder="Zoek"
+              value="${escapeAttribute(appState.searchQuery)}"
+            >
+          </div>
+        </div>
 
-      <div class="program-results-header">
-        <strong id="program-result-count">${resultCountText(filtered.length, store.programma.length)}</strong>
         <button
           type="button"
-          class="reset-filters-button"
+          class="reset-filters-button program-reset-button"
           id="reset-filters"
           ${hasActiveProgramFilters() ? "" : "hidden"}
         >
           Wis filters
         </button>
+
+        <div
+          class="program-filter-panel"
+          id="program-filter-panel"
+          hidden
+        >
+          ${renderProgramFilters()}
+        </div>
+      </div>
+
+      <div class="program-results-header">
+        <strong id="program-result-count">
+          ${resultCountText(filtered.length, store.programma.length)}
+        </strong>
       </div>
 
       <div id="program-results">
@@ -599,32 +633,167 @@ function discoverCard(iconName, title, text) {
 function programCard(item) {
   const category = programCategory(item);
   const location = programLocation(item);
-  const time = formatProgramTime(item);
-  const description = item.shortDescription || item.description || "Meer informatie volgt.";
+  const part = programPart(item);
+
+  const description =
+    item.shortDescription ||
+    item.description ||
+    "Meer informatie volgt.";
+
   const colorClass = categoryColorClassFromItem(item);
+  const moment = formatProgramTime(item);
+  const imageUrl = safeExternalUrl(item.imageUrl);
+
+  const tags = String(item.tags || "")
+    .split(",")
+    .map((tag) => tag.trim())
+    .filter(Boolean)
+    .slice(0, 3);
 
   return `
-    <button type="button" class="program-card program-card-button ${colorClass}" onclick="showProgramDetail('${escapeJsString(item.id)}')">
-      <span class="badge ${colorClass}">${escapeHtml(category)}</span>
-      <h3>${escapeHtml(item.title)}</h3>
+    <button
+      type="button"
+      class="program-card program-card-button ${colorClass}"
+      onclick="showProgramDetail('${escapeJsString(item.id)}')"
+      aria-label="Bekijk details van ${escapeAttribute(item.title)}"
+    >
+      <span class="program-card-accent" aria-hidden="true"></span>
 
-      <div class="program-meta">
-        <span class="mini-icon" data-icon="clock"></span>
-        <span>${escapeHtml(time)}</span>
-        <span class="mini-icon" data-icon="pin"></span>
-        <span>${escapeHtml(location)}</span>
-      </div>
+      <span class="program-card-content">
+        <span class="program-card-top ${imageUrl ? "has-image" : ""}">
+          <span class="program-card-heading">
+            <span class="program-card-title">
+              ${escapeHtml(item.title)}
+            </span>
+          </span>
 
-      <p>${escapeHtml(description)}</p>
-      <span class="card-link">Bekijk details</span>
+          ${
+            imageUrl
+              ? `
+                <span class="program-card-image">
+                  <img
+                    src="${escapeAttribute(imageUrl)}"
+                    alt=""
+                    loading="lazy"
+                  >
+                </span>
+              `
+              : ""
+          }
+        </span>
+
+        <span class="program-card-labels">
+          <span class="badge ${colorClass}">
+            ${escapeHtml(category)}
+          </span>
+
+          ${tags
+            .map(
+              (tag) => `
+                <span class="program-tag">
+                  ${escapeHtml(tag)}
+                </span>
+              `
+            )
+            .join("")}
+        </span>
+
+        <span class="program-card-description">
+          ${escapeHtml(description)}
+        </span>
+
+        <span class="program-card-facts">
+          <span class="program-card-fact program-card-fact-time">
+            <span
+              class="mini-icon"
+              data-icon="clock"
+              aria-hidden="true"
+            ></span>
+
+            <span class="program-card-fact-text">
+              ${escapeHtml(moment)}
+            </span>
+          </span>
+
+          ${
+            part
+              ? `
+                <span class="program-card-fact program-card-fact-part">
+                  <span
+                    class="mini-icon"
+                    data-icon="compass"
+                    aria-hidden="true"
+                  ></span>
+
+                  <span class="program-card-fact-text">
+                    ${escapeHtml(part)}
+                  </span>
+                </span>
+              `
+              : ""
+          }
+
+          <span class="program-card-fact program-card-fact-location">
+            <span
+              class="mini-icon"
+              data-icon="pin"
+              aria-hidden="true"
+            ></span>
+
+            <span class="program-card-fact-text">
+              ${escapeHtml(location)}
+            </span>
+          </span>
+        </span>
+      </span>
     </button>
   `;
 }
 
 function formatProgramTime(item) {
-  const datePart = [item.day, item.date].filter(Boolean).join(" ");
-  const timePart = item.endTime ? `${item.startTime} – ${item.endTime}` : item.startTime;
-  return [datePart, timePart].filter(Boolean).join(" · ") || "Tijd volgt";
+  const day = capitalizeFirst(item.day);
+  const date = String(item.date || "").trim();
+
+  let datePart = day;
+
+  if (date) {
+    const normalizedDay = normalizeSearchValue(day);
+    const normalizedDate = normalizeSearchValue(date);
+
+    if (!normalizedDay.includes(normalizedDate)) {
+      datePart = [day, date].filter(Boolean).join(" ");
+    }
+  }
+
+  const startTime = formatClockTime(item.startTime);
+  const endTime = formatClockTime(item.endTime);
+
+  const timePart = endTime
+    ? `${startTime} – ${endTime}`
+    : startTime;
+
+  return [datePart, timePart]
+    .filter(Boolean)
+    .join(" · ") || "Tijd volgt";
+}
+
+function capitalizeFirst(value) {
+  const text = String(value || "").trim();
+
+  return text
+    ? text.charAt(0).toLocaleUpperCase("nl-NL") + text.slice(1)
+    : "";
+}
+
+function formatClockTime(value) {
+  const text = String(value || "").trim();
+  const match = text.match(/^(\d{1,2}):(\d{2})/);
+
+  if (!match) {
+    return text;
+  }
+
+  return `${match[1].padStart(2, "0")}:${match[2]}`;
 }
 
 function categoryColorClass(category) {
