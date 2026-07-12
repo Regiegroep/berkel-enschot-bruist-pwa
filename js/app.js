@@ -53,7 +53,7 @@ function addProgramSaved(programId) {
     saveProgramIds();
   }
 
-  navigateTo(appState.currentScreen);
+  renderProgramResultsOnly();
 }
 
 function removeProgramSaved(programId) {
@@ -64,7 +64,13 @@ function removeProgramSaved(programId) {
   );
 
   saveProgramIds();
-  navigateTo(appState.currentScreen);
+
+  if (appState.currentScreen === "mijn") {
+    renderScreen("mijn");
+    renderInlineIcons();
+  } else {
+    renderProgramResultsOnly();
+  }
 }
 
 async function initializeApp() {

@@ -263,6 +263,44 @@ function compareProgramItems(a, b) {
   );
 }
 
+function programsOverlap(itemA, itemB) {
+  const dayA = normalizeSearchValue(programDay(itemA));
+  const dayB = normalizeSearchValue(programDay(itemB));
+
+  if (!dayA || dayA !== dayB) {
+    return false;
+  }
+
+  const startA = parseProgramTime(itemA.startTime);
+  const endA = parseProgramTime(itemA.endTime);
+  const startB = parseProgramTime(itemB.startTime);
+  const endB = parseProgramTime(itemB.endTime);
+
+  const hasValidTimes =
+    startA !== Number.MAX_SAFE_INTEGER &&
+    endA !== Number.MAX_SAFE_INTEGER &&
+    startB !== Number.MAX_SAFE_INTEGER &&
+    endB !== Number.MAX_SAFE_INTEGER;
+
+  if (!hasValidTimes) {
+    return false;
+  }
+
+  return startA < endB && startB < endA;
+}
+
+function hasSavedProgramConflict(item) {
+  const savedItems = store.programma.filter((programItem) =>
+    isProgramSaved(programItem.id)
+  );
+
+  return savedItems.some(
+    (otherItem) =>
+      String(otherItem.id) !== String(item.id) &&
+      programsOverlap(item, otherItem)
+  );
+}
+
 function parseProgramDate(value) {
   const text = String(value || "").trim();
 
@@ -579,6 +617,18 @@ function renderMijnBruist() {
     `;
   }
 
+  const itemsByDay = savedItems.reduce((groups, item) => {
+    const day = programDay(item) || "Programma";
+
+    if (!groups[day]) {
+      groups[day] = [];
+    }
+
+    groups[day].push(item);
+
+    return groups;
+  }, {});
+
   return `
     <section class="screen">
       ${screenHeader(
@@ -593,7 +643,21 @@ function renderMijnBruist() {
         </strong>
       </div>
 
-      ${renderProgramCards(savedItems, "mijn")}
+      <div class="my-bruist-days">
+        ${Object.entries(itemsByDay)
+      .map(
+        ([day, items]) => `
+              <section class="my-bruist-day">
+                <h2 class="my-bruist-day-title">
+                  ${escapeHtml(day)}
+                </h2>
+
+                ${renderProgramCards(items, "mijn")}
+              </section>
+            `
+      )
+      .join("")}
+      </div>
     </section>
   `;
 }
@@ -744,6 +808,15 @@ function programCard(item, context = "programma") {
         <p class="program-card-description">
           ${escapeHtml(description)}
         </p>
+
+        ${context === "mijn" && hasSavedProgramConflict(item)
+      ? `
+      <div class="program-conflict" role="status">
+        Let op: dit onderdeel overlapt met een andere keuze.
+      </div>
+    `
+      : ""
+    }
 
         <div class="program-card-facts">
           <div class="program-card-fact program-card-fact-time">

@@ -1118,3 +1118,14 @@ main {
   height: 18px;
   stroke-width: 2.2;
 }
+
+.program-conflict {
+  margin: 10px 0;
+  padding: 8px 10px;
+  border-radius: 9px;
+  background: rgba(232, 78, 34, 0.10);
+  color: var(--kleur-oranje);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.35;
+}
