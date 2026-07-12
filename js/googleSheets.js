@@ -143,28 +143,74 @@ function mapOrganizationRow(row) {
   };
 }
 
+function mapFestivalInfoRow(row) {
+  return {
+    id: firstValue(row, ["info_id", "id"]),
+    title: firstValue(row, ["titel", "naam"]),
+    shortText: firstValue(row, ["korte_tekst"]),
+    text: firstValue(row, ["tekst", "omschrijving"]),
+    icon: firstValue(row, ["icoon", "icon"]),
+    active: firstValue(row, ["actief"]),
+    order: Number(firstValue(row, ["volgorde"])) || 999,
+    imageUrl: firstValue(row, ["afbeelding_url", "afbeelding"])
+  };
+}
+
 async function loadAllGoogleSheetsData() {
   const config = await loadConfig();
   const id = config.spreadsheetId;
   const s = config.sheets;
 
-  const [programmaRows, categorieRows, onderdeelRows, locatieRows, organisatieRows] =
-    await Promise.all([
-      fetchSheetRows(id, s.programma),
-      fetchSheetRows(id, s.categorieen),
-      fetchSheetRows(id, s.festivalonderdelen),
-      fetchSheetRows(id, s.locaties),
-      fetchSheetRows(id, s.organisaties)
-    ]);
+  const [
+    programmaRows,
+    categorieRows,
+    onderdeelRows,
+    locatieRows,
+    organisatieRows,
+    festivalInfoRows
+  ] = await Promise.all([
+    fetchSheetRows(id, s.programma),
+    fetchSheetRows(id, s.categorieen),
+    fetchSheetRows(id, s.festivalonderdelen),
+    fetchSheetRows(id, s.locaties),
+    fetchSheetRows(id, s.organisaties),
+    fetchSheetRows(id, s.festivalinfo)
+  ]);
 
   return {
     config,
+
     programma: programmaRows
       .map(mapProgramRow)
-      .filter((item) => item.title && item.status.trim().toLowerCase() === "definitief"),
-    categorieen: categorieRows.map(mapCategoryRow).filter((item) => item.id),
-    festivalonderdelen: onderdeelRows.map(mapFestivalPartRow).filter((item) => item.id),
-    locaties: locatieRows.map(mapLocationRow).filter((item) => item.id),
-    organisaties: organisatieRows.map(mapOrganizationRow).filter((item) => item.id)
+      .filter(
+        (item) =>
+          item.title &&
+          item.status.trim().toLowerCase() === "definitief"
+      ),
+
+    categorieen: categorieRows
+      .map(mapCategoryRow)
+      .filter((item) => item.id),
+
+    festivalonderdelen: onderdeelRows
+      .map(mapFestivalPartRow)
+      .filter((item) => item.id),
+
+    locaties: locatieRows
+      .map(mapLocationRow)
+      .filter((item) => item.id),
+
+    organisaties: organisatieRows
+      .map(mapOrganizationRow)
+      .filter((item) => item.id),
+
+    festivalinfo: festivalInfoRows
+      .map(mapFestivalInfoRow)
+      .filter(
+        (item) =>
+          item.id &&
+          item.active.trim().toLowerCase() === "ja"
+      )
+      .sort((a, b) => a.order - b.order)
   };
 }

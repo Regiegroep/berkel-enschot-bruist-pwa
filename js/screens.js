@@ -684,21 +684,97 @@ function renderPlattegrond() {
 }
 
 function showFestivalInfo() {
+  const items = store.festivalinfo || [];
+  const heroImageUrl = safeExternalUrl(items[0]?.imageUrl);
+
   document.getElementById("app").innerHTML = `
-    <section class="screen">
-      ${screenHeader("Festivalinfo", "Praktische informatie over Berkel-Enschot Bruist.")}
-      <div class="card-grid">
-        ${discoverCard("pin", "Bereikbaarheid", "Hoe kom je bij het festival?")}
-        ${discoverCard("pin", "Fiets parkeren", "Informatie over fietsenstallingen.")}
-        ${discoverCard("pin", "Auto parkeren", "Parkeren in en rond het centrum.")}
-        ${discoverCard("info", "Toiletten", "Vind sanitaire voorzieningen.")}
-        ${discoverCard("info", "EHBO", "Waar kun je terecht bij hulp?")}
-        ${discoverCard("info", "Toegankelijkheid", "Informatie voor bezoekers met een beperking.")}
+    <section class="screen festival-info-screen">
+      ${screenHeader(
+    "Festivalinfo",
+    "Praktische informatie over Berkel-Enschot Bruist."
+  )}
+
+      ${heroImageUrl
+      ? `
+            <div class="festival-info-hero">
+              <img
+                src="${escapeAttribute(heroImageUrl)}"
+                alt=""
+                loading="eager"
+              >
+            </div>
+          `
+      : ""
+    }
+
+      ${items.length > 0
+      ? `
+            <div class="festival-info-list">
+              ${items
+        .map((item) => festivalInfoCard(item))
+        .join("")}
+            </div>
+          `
+      : `
+            <div class="empty-state">
+              <h3>Festivalinformatie volgt</h3>
+              <p>
+                De praktische informatie wordt binnenkort aangevuld.
+              </p>
+            </div>
+          `
+    }
+    </section>
+  `;
+
+  updateNavigation("festivalinfo");
+  renderInlineIcons();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function showFestivalInfoDetail(infoId) {
+  appState.selectedFestivalInfoId = String(infoId);
+
+  const item = store.festivalinfo.find(
+    (infoItem) =>
+      String(infoItem.id) === appState.selectedFestivalInfoId
+  );
+
+  if (!item) {
+    return;
+  }
+
+  document.getElementById("app").innerHTML = `
+    <section class="screen festival-info-detail-screen">
+      <button
+        type="button"
+        class="back-button"
+        onclick="showFestivalInfo()"
+      >
+        ← Festivalinfo
+      </button>
+
+      ${screenHeader(item.title, "")}
+
+      ${item.imageUrl
+      ? `
+            <div class="festival-info-detail-image">
+              <img
+                src="${escapeAttribute(safeExternalUrl(item.imageUrl))}"
+                alt=""
+              >
+            </div>
+          `
+      : ""
+    }
+
+      <div class="festival-info-detail-content">
+        <p>${escapeHtml(item.text)}</p>
       </div>
     </section>
   `;
 
-  updateNavigation("");
+  updateNavigation("festivalinfo");
   renderInlineIcons();
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
@@ -736,6 +812,37 @@ function discoverCard(iconName, title, text) {
         <p>${text}</p>
       </span>
     </article>
+  `;
+}
+
+function festivalInfoCard(item) {
+  return `
+    <button
+      type="button"
+      class="festival-info-card"
+      onclick="showFestivalInfoDetail('${escapeJsString(item.id)}')"
+      aria-label="Bekijk informatie over ${escapeAttribute(item.title)}"
+    >
+      <span
+        class="festival-info-icon"
+        data-icon="${escapeAttribute(item.icon || "info")}"
+        aria-hidden="true"
+      ></span>
+
+      <span class="festival-info-content">
+        <span class="festival-info-title">
+          ${escapeHtml(item.title)}
+        </span>
+
+        <span class="festival-info-text">
+          ${escapeHtml(item.shortText || item.text)}
+        </span>
+      </span>
+
+      <span class="festival-info-arrow" aria-hidden="true">
+        ›
+      </span>
+    </button>
   `;
 }
 

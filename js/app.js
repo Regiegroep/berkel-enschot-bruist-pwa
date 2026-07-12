@@ -1,6 +1,7 @@
 const appState = {
   currentScreen: "home",
   selectedProgramId: null,
+  selectedFestivalInfoId: null,
   searchQuery: "",
   savedProgramIds: loadSavedProgramIds(),
 
