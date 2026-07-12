@@ -44,8 +44,15 @@ main {
 }
 
 @keyframes screenIn {
-  from { opacity: 0; transform: translateY(4px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* HOME */
@@ -135,11 +142,30 @@ main {
   background: var(--accent);
 }
 
-.accent-blue { --accent: var(--kleur-blauw); --accent-zacht: rgba(53, 96, 169, 0.12); }
-.accent-purple { --accent: var(--kleur-paars); --accent-zacht: rgba(104, 49, 134, 0.12); }
-.accent-magenta { --accent: var(--kleur-magenta); --accent-zacht: rgba(193, 27, 93, 0.12); }
-.accent-orange { --accent: var(--kleur-oranje); --accent-zacht: rgba(232, 78, 34, 0.12); }
-.accent-grey { --accent: var(--kleur-donkergrijs); --accent-zacht: rgba(114, 114, 113, 0.12); }
+.accent-blue {
+  --accent: var(--kleur-blauw);
+  --accent-zacht: rgba(53, 96, 169, 0.12);
+}
+
+.accent-purple {
+  --accent: var(--kleur-paars);
+  --accent-zacht: rgba(104, 49, 134, 0.12);
+}
+
+.accent-magenta {
+  --accent: var(--kleur-magenta);
+  --accent-zacht: rgba(193, 27, 93, 0.12);
+}
+
+.accent-orange {
+  --accent: var(--kleur-oranje);
+  --accent-zacht: rgba(232, 78, 34, 0.12);
+}
+
+.accent-grey {
+  --accent: var(--kleur-donkergrijs);
+  --accent-zacht: rgba(114, 114, 113, 0.12);
+}
 
 .menu-title {
   display: block;
@@ -628,6 +654,7 @@ main {
 }
 
 @media (min-width: 720px) {
+
   .card-grid,
   .map-options {
     grid-template-columns: repeat(2, 1fr);
@@ -648,8 +675,17 @@ main {
 }
 
 @keyframes loadingPulse {
-  0%, 100% { transform: scale(1); opacity: 0.72; }
-  50% { transform: scale(1.06); opacity: 1; }
+
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.72;
+  }
+
+  50% {
+    transform: scale(1.06);
+    opacity: 1;
+  }
 }
 
 .error-state {
@@ -746,7 +782,7 @@ main {
   line-height: 1.65;
 }
 
-.detail-description p + p {
+.detail-description p+p {
   margin-top: 12px;
 }
 
@@ -879,7 +915,7 @@ main {
   color: var(--kleur-donkergrijs);
 }
 
-.filter-field > span {
+.filter-field>span {
   color: var(--kleur-subtekst);
   font-size: 13px;
   font-weight: 700;
@@ -926,7 +962,7 @@ main {
     gap: 8px;
   }
 
-  .filter-field > span {
+  .filter-field>span {
     font-size: 12px;
   }
 
@@ -965,7 +1001,10 @@ main {
 }
 
 
-.accent-yellow { --accent: #A67C00; --accent-zacht: rgba(255, 212, 60, 0.30); }
+.accent-yellow {
+  --accent: #A67C00;
+  --accent-zacht: rgba(255, 212, 60, 0.30);
+}
 
 /* T-005 — laatste verfijningen */
 
@@ -1016,4 +1055,47 @@ main {
   font-family: Arial, Helvetica, sans-serif;
   font-size: 16px;
   line-height: 1.35;
+}
+
+.program-card-actions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.program-card-action {
+  min-height: 40px;
+  padding: 8px 12px;
+  border: 1px solid var(--kleur-lijn);
+  border-radius: 11px;
+  background: rgba(255, 255, 255, 0.78);
+  color: var(--kleur-donkergrijs);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.program-card-add {
+  border-color: rgba(193, 27, 93, 0.28);
+  background: rgba(193, 27, 93, 0.10);
+  color: var(--kleur-magenta);
+}
+
+.program-card-remove {
+  border-color: rgba(193, 27, 93, 0.28);
+  background: transparent;
+  color: var(--kleur-magenta);
+}
+
+.program-card-action:disabled {
+  cursor: default;
+  opacity: 0.7;
+}
+
+@media (min-width: 420px) {
+  .program-card-actions {
+    grid-template-columns: 1fr 1fr;
+  }
 }

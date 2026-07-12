@@ -156,20 +156,20 @@ function filterSelect(filterName, label, options, selectedValue) {
       <select data-filter="${filterName}">
         <option value="">Alle</option>
         ${options
-          .map(
-            (option) => `
+      .map(
+        (option) => `
               <option value="${escapeAttribute(option)}" ${option === selectedValue ? "selected" : ""}>
                 ${escapeHtml(option)}
               </option>
             `
-          )
-          .join("")}
+      )
+      .join("")}
       </select>
     </label>
   `;
 }
 
-function renderProgramCards(items) {
+function renderProgramCards(items, context = "programma") {
   if (store.programma.length === 0) {
     return renderEmptyProgramState();
   }
@@ -183,57 +183,61 @@ function renderProgramCards(items) {
     `;
   }
 
-  return `<div class="program-list">${items.map(programCard).join("")}</div>`;
+  return `
+    <div class="program-list">
+      ${items.map((item) => programCard(item, context)).join("")}
+    </div>
+  `;
 }
 
 function getFilteredProgramma() {
   const query = normalizeSearchValue(appState.searchQuery);
 
- return store.programma
+  return store.programma
     .filter((item) => {
-    const day = programDay(item);
-    const category = programCategory(item);
-    const part = programPart(item);
-    const location = programLocation(item);
+      const day = programDay(item);
+      const category = programCategory(item);
+      const part = programPart(item);
+      const location = programLocation(item);
 
-    const matchesQuery =
-      !query ||
-      [
-      item.title,
-      item.shortDescription,
-      item.description,
-      category,
-      part,
-      location,
-      day,
-      item.date,
-      item.tags
-      ].some((value) => normalizeSearchValue(value).includes(query));
+      const matchesQuery =
+        !query ||
+        [
+          item.title,
+          item.shortDescription,
+          item.description,
+          category,
+          part,
+          location,
+          day,
+          item.date,
+          item.tags
+        ].some((value) => normalizeSearchValue(value).includes(query));
 
-    const matchesDay = !appState.filters.day || day === appState.filters.day;
-    const matchesCategory =
-      !appState.filters.category || category === appState.filters.category;
-    const matchesPart =
-      !appState.filters.part || part === appState.filters.part;
-    const matchesLocation =
-      !appState.filters.location || location === appState.filters.location;
-    const itemTags = String(item.tags || "")
-      .split(",")
-      .map((tag) => tag.trim());
+      const matchesDay = !appState.filters.day || day === appState.filters.day;
+      const matchesCategory =
+        !appState.filters.category || category === appState.filters.category;
+      const matchesPart =
+        !appState.filters.part || part === appState.filters.part;
+      const matchesLocation =
+        !appState.filters.location || location === appState.filters.location;
+      const itemTags = String(item.tags || "")
+        .split(",")
+        .map((tag) => tag.trim());
 
-    const matchesTag =
-      !appState.filters.tag || itemTags.includes(appState.filters.tag);
+      const matchesTag =
+        !appState.filters.tag || itemTags.includes(appState.filters.tag);
 
-    return (
-      matchesQuery &&
-      matchesDay &&
-      matchesCategory &&
-      matchesPart &&
-      matchesLocation &&
-      matchesTag
-    );
-  })
-  .sort(compareProgramItems);
+      return (
+        matchesQuery &&
+        matchesDay &&
+        matchesCategory &&
+        matchesPart &&
+        matchesLocation &&
+        matchesTag
+      );
+    })
+    .sort(compareProgramItems);
 }
 
 function compareProgramItems(a, b) {
@@ -323,11 +327,11 @@ function normalizeSearchValue(value) {
 function hasActiveProgramFilters() {
   return Boolean(
     appState.searchQuery ||
-      appState.filters.day ||
-      appState.filters.category ||
-      appState.filters.part ||
-      appState.filters.location ||
-      appState.filters.tag
+    appState.filters.day ||
+    appState.filters.category ||
+    appState.filters.part ||
+    appState.filters.location ||
+    appState.filters.tag
   );
 }
 
@@ -433,41 +437,37 @@ function renderProgramDetail() {
             <span>${escapeHtml(location)}</span>
           </div>
 
-          ${
-            address
-              ? `<div class="detail-fact">
+          ${address
+      ? `<div class="detail-fact">
                    <span class="detail-fact-icon" data-icon="pin"></span>
                    <span>${escapeHtml(address)}</span>
                  </div>`
-              : ""
-          }
+      : ""
+    }
 
-          ${
-            part
-              ? `<div class="detail-fact">
+          ${part
+      ? `<div class="detail-fact">
                    <span class="detail-fact-icon" data-icon="compass"></span>
                    <span>Onderdeel van ${escapeHtml(part)}</span>
                  </div>`
-              : ""
-          }
+      : ""
+    }
 
-          ${
-            tags.length
-              ? `<div class="detail-fact">
+          ${tags.length
+      ? `<div class="detail-fact">
                   <span class="detail-fact-icon" data-icon="tag"></span>
                   <span>${tags.map((tag) => escapeHtml(tag)).join(" • ")}</span>
                 </div>`
-              : ""
-          }
+      : ""
+    }
 
-          ${
-            organization
-              ? `<div class="detail-fact">
+          ${organization
+      ? `<div class="detail-fact">
                    <span class="detail-fact-icon" data-icon="info"></span>
                    <span>Georganiseerd door ${escapeHtml(organization)}</span>
                  </div>`
-              : ""
-          }
+      : ""
+    }
         </div>
 
         <div class="detail-section">
@@ -476,16 +476,23 @@ function renderProgramDetail() {
         </div>
 
         <div class="detail-actions">
-          ${
-            websiteUrl
-              ? `<a class="primary-button" href="${escapeAttribute(websiteUrl)}" target="_blank" rel="noopener">
+          ${websiteUrl
+      ? `<a class="primary-button" href="${escapeAttribute(websiteUrl)}" target="_blank" rel="noopener">
                    Meer informatie op website
                  </a>`
-              : ""
-          }
+      : ""
+    }
 
-          <button type="button" class="secondary-button" disabled>
-            Toevoegen aan Mijn Bruist — volgt later
+          <button
+            type="button"
+            class="secondary-button"
+            onclick="addProgramSaved('${escapeJsString(item.id)}')"
+            ${isProgramSaved(item.id) ? "disabled" : ""}
+          >
+            ${isProgramSaved(item.id)
+      ? "Toegevoegd aan Mijn Bruist"
+      : "Toevoegen aan Mijn Bruist"
+    }
           </button>
 
           <button type="button" class="secondary-button" disabled>
@@ -542,13 +549,51 @@ function renderOntdek() {
 }
 
 function renderMijnBruist() {
+  const savedItems = store.programma
+    .filter((item) => isProgramSaved(item.id))
+    .sort(compareProgramItems);
+
+  if (savedItems.length === 0) {
+    return `
+      <section class="screen">
+        ${screenHeader(
+      "Mijn Bruist",
+      "Jouw persoonlijke festivalprogramma."
+    )}
+
+        <div class="empty-state">
+          <h3>Nog geen onderdelen gekozen</h3>
+          <p>
+            Voeg programmaonderdelen toe en stel zo je eigen festivalprogramma samen.
+          </p>
+
+          <button
+            type="button"
+            class="primary-button"
+            onclick="navigateTo('programma')"
+          >
+            Bekijk het programma
+          </button>
+        </div>
+      </section>
+    `;
+  }
+
   return `
     <section class="screen">
-      ${screenHeader("Mijn Bruist", "Hier komt straks je persoonlijke festivalagenda.")}
-      <div class="empty-state">
-        <h3>Nog geen activiteiten gekozen</h3>
-        <p>Favorieten worden in een volgende release toegevoegd.</p>
+      ${screenHeader(
+    "Mijn Bruist",
+    "Jouw persoonlijke festivalprogramma."
+  )}
+
+      <div class="program-results-header">
+        <strong>
+          ${savedItems.length} ${savedItems.length === 1 ? "onderdeel" : "onderdelen"
+    }
+        </strong>
       </div>
+
+      ${renderProgramCards(savedItems, "mijn")}
     </section>
   `;
 }
@@ -630,7 +675,7 @@ function discoverCard(iconName, title, text) {
   `;
 }
 
-function programCard(item) {
+function programCard(item, context = "programma") {
   const category = programCategory(item);
   const location = programLocation(item);
   const part = programPart(item);
@@ -643,6 +688,7 @@ function programCard(item) {
   const colorClass = categoryColorClassFromItem(item);
   const moment = formatProgramTime(item);
   const imageUrl = safeExternalUrl(item.imageUrl);
+  const isSaved = isProgramSaved(item.id);
 
   const tags = String(item.tags || "")
     .split(",")
@@ -651,25 +697,19 @@ function programCard(item) {
     .slice(0, 3);
 
   return `
-    <button
-      type="button"
-      class="program-card program-card-button ${colorClass}"
-      onclick="showProgramDetail('${escapeJsString(item.id)}')"
-      aria-label="Bekijk details van ${escapeAttribute(item.title)}"
-    >
+    <article class="program-card ${colorClass}">
       <span class="program-card-accent" aria-hidden="true"></span>
 
-      <span class="program-card-content">
-        <span class="program-card-top ${imageUrl ? "has-image" : ""}">
-          <span class="program-card-heading">
-            <span class="program-card-title">
+      <div class="program-card-content">
+        <div class="program-card-top ${imageUrl ? "has-image" : ""}">
+          <div class="program-card-heading">
+            <h3 class="program-card-title">
               ${escapeHtml(item.title)}
-            </span>
-          </span>
+            </h3>
+          </div>
 
-          ${
-            imageUrl
-              ? `
+          ${imageUrl
+      ? `
                 <span class="program-card-image">
                   <img
                     src="${escapeAttribute(imageUrl)}"
@@ -678,75 +718,112 @@ function programCard(item) {
                   >
                 </span>
               `
-              : ""
-          }
-        </span>
+      : ""
+    }
+        </div>
 
-        <span class="program-card-labels">
+        <div class="program-card-labels">
           <span class="badge ${colorClass}">
             ${escapeHtml(category)}
           </span>
 
           ${tags
-            .map(
-              (tag) => `
+      .map(
+        (tag) => `
                 <span class="program-tag">
                   ${escapeHtml(tag)}
                 </span>
               `
-            )
-            .join("")}
-        </span>
+      )
+      .join("")}
+        </div>
 
-        <span class="program-card-description">
+        <p class="program-card-description">
           ${escapeHtml(description)}
-        </span>
+        </p>
 
-        <span class="program-card-facts">
-          <span class="program-card-fact program-card-fact-time">
+        <div class="program-card-facts">
+          <div class="program-card-fact program-card-fact-time">
             <span
               class="mini-icon"
               data-icon="clock"
               aria-hidden="true"
             ></span>
-
             <span class="program-card-fact-text">
               ${escapeHtml(moment)}
             </span>
-          </span>
+          </div>
 
-          ${
-            part
-              ? `
-                <span class="program-card-fact program-card-fact-part">
+          ${part
+      ? `
+                <div class="program-card-fact program-card-fact-part">
                   <span
                     class="mini-icon"
                     data-icon="compass"
                     aria-hidden="true"
                   ></span>
-
                   <span class="program-card-fact-text">
                     ${escapeHtml(part)}
                   </span>
-                </span>
+                </div>
               `
-              : ""
-          }
+      : ""
+    }
 
-          <span class="program-card-fact program-card-fact-location">
+          <div class="program-card-fact program-card-fact-location">
             <span
               class="mini-icon"
               data-icon="pin"
               aria-hidden="true"
             ></span>
-
             <span class="program-card-fact-text">
               ${escapeHtml(location)}
             </span>
-          </span>
-        </span>
-      </span>
-    </button>
+          </div>
+        </div>
+
+        <div class="program-card-actions">
+          ${context === "mijn"
+      ? `
+                <button
+                  type="button"
+                  class="program-card-action program-card-remove"
+                  onclick="removeProgramSaved('${escapeJsString(item.id)}')"
+                >
+                  Verwijder uit Mijn Bruist
+                </button>
+              `
+      : isSaved
+        ? `
+                  <button
+                    type="button"
+                    class="program-card-action"
+                    disabled
+                  >
+                    Toegevoegd aan Mijn Bruist
+                  </button>
+                `
+        : `
+                  <button
+                    type="button"
+                    class="program-card-action program-card-add"
+                    onclick="addProgramSaved('${escapeJsString(item.id)}')"
+                  >
+                    Toevoegen aan Mijn Bruist
+                  </button>
+                `
+    }
+
+          <button
+            type="button"
+            class="program-card-action program-card-map"
+            disabled
+          >
+            Toon op kaart
+          </button>
+        </div>
+      </div>
+    </article>
   `;
 }
 

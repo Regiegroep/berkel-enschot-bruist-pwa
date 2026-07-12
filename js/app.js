@@ -2,6 +2,8 @@ const appState = {
   currentScreen: "home",
   selectedProgramId: null,
   searchQuery: "",
+  savedProgramIds: loadSavedProgramIds(),
+
   filters: {
     day: "",
     category: "",
@@ -10,6 +12,60 @@ const appState = {
     tag: ""
   }
 };
+
+function loadSavedProgramIds() {
+  try {
+    const saved = localStorage.getItem("beb-mijn-bruist");
+
+    if (!saved) {
+      return [];
+    }
+
+    const ids = JSON.parse(saved);
+
+    return Array.isArray(ids) ? ids.map(String) : [];
+  } catch (error) {
+    console.warn("Mijn Bruist kon niet worden geladen.", error);
+    return [];
+  }
+}
+
+function saveProgramIds() {
+  localStorage.setItem(
+    "beb-mijn-bruist",
+    JSON.stringify(appState.savedProgramIds)
+  );
+}
+
+function isProgramSaved(programId) {
+  return appState.savedProgramIds.includes(String(programId));
+}
+
+function addProgramSaved(programId) {
+  const id = String(programId);
+
+  if (!isProgramSaved(id)) {
+    appState.savedProgramIds = [
+      ...appState.savedProgramIds,
+      id
+    ];
+
+    saveProgramIds();
+  }
+
+  navigateTo(appState.currentScreen);
+}
+
+function removeProgramSaved(programId) {
+  const id = String(programId);
+
+  appState.savedProgramIds = appState.savedProgramIds.filter(
+    (savedId) => savedId !== id
+  );
+
+  saveProgramIds();
+  navigateTo(appState.currentScreen);
+}
 
 async function initializeApp() {
   setupNavigation();
