@@ -5,6 +5,7 @@ const store = {
   festivalonderdelen: [],
   locaties: [],
   organisaties: [],
+  festivalinfo: [],
   indexes: {},
   loading: false,
   error: null
