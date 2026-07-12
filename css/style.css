@@ -1058,44 +1058,63 @@ main {
 }
 
 .program-card-actions {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 8px;
-  margin-top: 16px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-top: 14px;
+  padding-top: 11px;
+  border-top: 1px solid var(--kleur-lijn);
 }
 
 .program-card-action {
-  min-height: 40px;
-  padding: 8px 12px;
-  border: 1px solid var(--kleur-lijn);
-  border-radius: 11px;
-  background: rgba(255, 255, 255, 0.78);
+  appearance: none;
+  min-height: 32px;
+  padding: 0;
+  border: 0;
+  background: transparent;
   color: var(--kleur-donkergrijs);
   font-family: inherit;
-  font-size: 13px;
-  font-weight: 800;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: left;
   cursor: pointer;
 }
 
 .program-card-add {
-  border-color: rgba(193, 27, 93, 0.28);
-  background: rgba(193, 27, 93, 0.10);
   color: var(--kleur-magenta);
 }
 
 .program-card-remove {
-  border-color: rgba(193, 27, 93, 0.28);
-  background: transparent;
   color: var(--kleur-magenta);
 }
 
 .program-card-action:disabled {
+  color: var(--kleur-magenta);
   cursor: default;
-  opacity: 0.7;
+  opacity: 1;
 }
 
-@media (min-width: 420px) {
-  .program-card-actions {
-    grid-template-columns: 1fr 1fr;
-  }
+.program-card-map {
+  color: var(--kleur-subtekst);
+}
+
+.program-card-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.program-action-icon {
+  width: 18px;
+  height: 18px;
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 18px;
+}
+
+.program-action-icon svg {
+  width: 18px;
+  height: 18px;
+  stroke-width: 2.2;
 }

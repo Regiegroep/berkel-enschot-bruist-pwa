@@ -698,7 +698,10 @@ function programCard(item, context = "programma") {
 
   return `
     <article class="program-card ${colorClass}">
-      <span class="program-card-accent" aria-hidden="true"></span>
+      <span
+        class="program-card-accent"
+        aria-hidden="true"
+      ></span>
 
       <div class="program-card-content">
         <div class="program-card-top ${imageUrl ? "has-image" : ""}">
@@ -749,6 +752,7 @@ function programCard(item, context = "programma") {
               data-icon="clock"
               aria-hidden="true"
             ></span>
+
             <span class="program-card-fact-text">
               ${escapeHtml(moment)}
             </span>
@@ -762,6 +766,7 @@ function programCard(item, context = "programma") {
                     data-icon="compass"
                     aria-hidden="true"
                   ></span>
+
                   <span class="program-card-fact-text">
                     ${escapeHtml(part)}
                   </span>
@@ -776,6 +781,7 @@ function programCard(item, context = "programma") {
               data-icon="pin"
               aria-hidden="true"
             ></span>
+
             <span class="program-card-fact-text">
               ${escapeHtml(location)}
             </span>
@@ -789,8 +795,14 @@ function programCard(item, context = "programma") {
                   type="button"
                   class="program-card-action program-card-remove"
                   onclick="removeProgramSaved('${escapeJsString(item.id)}')"
+                  aria-label="Verwijder ${escapeAttribute(item.title)} uit Mijn Bruist"
                 >
-                  Verwijder uit Mijn Bruist
+                  <span
+                    class="program-action-icon"
+                    data-icon="star"
+                    aria-hidden="true"
+                  ></span>
+                  <span>Verwijder</span>
                 </button>
               `
       : isSaved
@@ -800,7 +812,12 @@ function programCard(item, context = "programma") {
                     class="program-card-action"
                     disabled
                   >
-                    Toegevoegd aan Mijn Bruist
+                    <span
+                      class="program-action-icon"
+                      data-icon="star"
+                      aria-hidden="true"
+                    ></span>
+                    <span>In Mijn Bruist</span>
                   </button>
                 `
         : `
@@ -808,8 +825,14 @@ function programCard(item, context = "programma") {
                     type="button"
                     class="program-card-action program-card-add"
                     onclick="addProgramSaved('${escapeJsString(item.id)}')"
+                    aria-label="Voeg ${escapeAttribute(item.title)} toe aan Mijn Bruist"
                   >
-                    Toevoegen aan Mijn Bruist
+                    <span
+                      class="program-action-icon"
+                      data-icon="star"
+                      aria-hidden="true"
+                    ></span>
+                    <span>Mijn Bruist</span>
                   </button>
                 `
     }
@@ -819,7 +842,12 @@ function programCard(item, context = "programma") {
             class="program-card-action program-card-map"
             disabled
           >
-            Toon op kaart
+            <span
+              class="program-action-icon"
+              data-icon="map"
+              aria-hidden="true"
+            ></span>
+            <span>Toon op kaart</span>
           </button>
         </div>
       </div>
