@@ -102,6 +102,11 @@ async function initializeApp() {
 function navigateTo(screenName) {
   appState.currentScreen = screenName;
 
+  if (screenName === "festivalinfo") {
+    showFestivalInfo();
+    return;
+  }
+
   if (screenName !== "detail") {
     appState.selectedProgramId = null;
   }

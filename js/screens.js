@@ -17,29 +17,51 @@ function renderHome() {
   return `
     <section class="screen">
       <div class="home-hero">
-        <img src="images/logo.png" alt="Logo Berkel-Enschot Bruist" class="logo-main">
-        <p class="intro-text">
-          Berkel-Enschot heeft een eigen festival.<br>
-          Een feest voor en door het dorp.
-        </p>
+        <img
+          src="images/logo.png"
+          alt="Logo Berkel-Enschot Bruist"
+          class="logo-main"
+        >
+
       </div>
 
       <div class="home-content">
         <figure class="hero-image">
-          <img src="images/hero-home.jpg" alt="Sfeerbeeld van Berkel-Enschot Bruist bij Koningsoord">
+          <img
+            src="images/hero-home.jpg"
+            alt="Sfeerbeeld van Berkel-Enschot Bruist bij Koningsoord"
+          >
         </figure>
 
         <div class="home-menu">
-          ${homeMenuItem("Programma", "Alle activiteiten.", "programma", "accent-blue")}
-          ${homeMenuItem("Ontdek", "Zoek op dag, categorie of locatie.", "ontdek", "accent-purple")}
-          ${homeMenuItem("Mijn Bruist", "Jouw festivalprogramma.", "mijn", "accent-magenta")}
-          ${homeMenuItem("Plattegrond", "Festivalkaart en locaties.", "kaart", "accent-orange")}
-        </div>
+          ${homeMenuItem(
+    "Programma",
+    "Bekijk alle activiteiten.",
+    "programma",
+    "accent-blue"
+  )}
 
-        <button type="button" class="festival-info-button" onclick="showFestivalInfo()">
-          <span class="festival-info-icon" data-icon="info"></span>
-          <span>Festivalinfo</span>
-        </button>
+          ${homeMenuItem(
+    "Mijn Bruist",
+    "Jouw persoonlijke festivalprogramma.",
+    "mijn",
+    "accent-magenta"
+  )}
+
+          ${homeMenuItem(
+    "Festivalinfo",
+    "Praktische informatie voor je bezoek.",
+    "festivalinfo",
+    "accent-purple"
+  )}
+
+          ${homeMenuItem(
+    "Plattegrond",
+    "Vind locaties en voorzieningen.",
+    "kaart",
+    "accent-orange"
+  )}
+        </div>
       </div>
     </section>
   `;
@@ -586,6 +608,34 @@ function renderOntdek() {
   `;
 }
 
+function formatMyBruistDayLabel(value) {
+  const text = String(value || "").trim();
+
+  const match = text.match(
+    /^(maandag|dinsdag|woensdag|donderdag|vrijdag|zaterdag|zondag)\s+(\d{1,2})\s+([a-zA-Zé]+)(?:\s+\d{4})?/i
+  );
+
+  if (!match) {
+    return capitalizeFirst(text);
+  }
+
+  const dayNames = {
+    maandag: "MA",
+    dinsdag: "DI",
+    woensdag: "WO",
+    donderdag: "DO",
+    vrijdag: "VR",
+    zaterdag: "ZA",
+    zondag: "ZO"
+  };
+
+  const day = dayNames[match[1].toLowerCase()] || match[1];
+  const date = match[2];
+  const month = match[3].toLocaleUpperCase("nl-NL");
+
+  return `${day} ${date} ${month}`;
+}
+
 function renderMijnBruist() {
   const savedItems = store.programma
     .filter((item) => isProgramSaved(item.id))
@@ -593,14 +643,15 @@ function renderMijnBruist() {
 
   if (savedItems.length === 0) {
     return `
-      <section class="screen">
+      <section class="screen my-bruist-screen">
         ${screenHeader(
       "Mijn Bruist",
-      "Jouw persoonlijke festivalprogramma."
+      "Nog geen keuzes in jouw festivalprogramma."
     )}
 
         <div class="empty-state">
           <h3>Nog geen onderdelen gekozen</h3>
+
           <p>
             Voeg programmaonderdelen toe en stel zo je eigen festivalprogramma samen.
           </p>
@@ -617,45 +668,18 @@ function renderMijnBruist() {
     `;
   }
 
-  const itemsByDay = savedItems.reduce((groups, item) => {
-    const day = programDay(item) || "Programma";
-
-    if (!groups[day]) {
-      groups[day] = [];
-    }
-
-    groups[day].push(item);
-
-    return groups;
-  }, {});
+  const subtitle =
+    savedItems.length === 1
+      ? "1 keuze in jouw festivalprogramma."
+      : `${savedItems.length} keuzes in jouw festivalprogramma.`;
 
   return `
-    <section class="screen">
-      ${screenHeader(
-    "Mijn Bruist",
-    "Jouw persoonlijke festivalprogramma."
-  )}
+    <section class="screen my-bruist-screen">
+      ${screenHeader("Mijn Bruist", subtitle)}
 
-      <div class="program-results-header">
-        <strong>
-          ${savedItems.length} ${savedItems.length === 1 ? "onderdeel" : "onderdelen"
-    }
-        </strong>
-      </div>
-
-      <div class="my-bruist-days">
-        ${Object.entries(itemsByDay)
-      .map(
-        ([day, items]) => `
-              <section class="my-bruist-day">
-                <h2 class="my-bruist-day-title">
-                  ${escapeHtml(day)}
-                </h2>
-
-                ${renderProgramCards(items, "mijn")}
-              </section>
-            `
-      )
+      <div class="my-bruist-list">
+        ${savedItems
+      .map((item) => myBruistCard(item))
       .join("")}
       </div>
     </section>
@@ -744,6 +768,8 @@ function showFestivalInfoDetail(infoId) {
     return;
   }
 
+  const imageUrl = safeExternalUrl(item.imageUrl);
+
   document.getElementById("app").innerHTML = `
     <section class="screen festival-info-detail-screen">
       <button
@@ -754,22 +780,24 @@ function showFestivalInfoDetail(infoId) {
         ← Festivalinfo
       </button>
 
-      ${screenHeader(item.title, "")}
-
-      ${item.imageUrl
+      ${imageUrl
       ? `
-            <div class="festival-info-detail-image">
+            <figure class="festival-info-detail-hero">
               <img
-                src="${escapeAttribute(safeExternalUrl(item.imageUrl))}"
+                src="${escapeAttribute(imageUrl)}"
                 alt=""
               >
-            </div>
+            </figure>
           `
       : ""
     }
 
-      <div class="festival-info-detail-content">
-        <p>${escapeHtml(item.text)}</p>
+      <div class="festival-info-detail-heading">
+        <h1>${escapeHtml(item.title)}</h1>
+      </div>
+
+      <div class="festival-info-detail-text">
+        ${formatDescription(item.text)}
       </div>
     </section>
   `;
@@ -1027,6 +1055,106 @@ function programCard(item, context = "programma") {
               data-icon="map"
               aria-hidden="true"
             ></span>
+            <span>Toon op kaart</span>
+          </button>
+        </div>
+      </div>
+    </article>
+  `;
+}
+
+function myBruistCard(item) {
+  const location = programLocation(item);
+  const colorClass = categoryColorClassFromItem(item);
+  const moment = formatProgramTime(item);
+  const imageUrl = safeExternalUrl(item.imageUrl);
+  const hasConflict = hasSavedProgramConflict(item);
+
+  return `
+    <article class="my-bruist-card ${colorClass}">
+      <span
+        class="my-bruist-card-accent"
+        aria-hidden="true"
+      ></span>
+
+      <div class="my-bruist-card-content">
+        <div class="my-bruist-card-top ${imageUrl ? "has-image" : ""}">
+          <h3 class="my-bruist-card-title">
+            ${escapeHtml(item.title)}
+          </h3>
+
+          ${imageUrl
+      ? `
+                <span class="my-bruist-card-image">
+                  <img
+                    src="${escapeAttribute(imageUrl)}"
+                    alt=""
+                    loading="lazy"
+                  >
+                </span>
+              `
+      : ""
+    }
+        </div>
+
+        <div class="my-bruist-card-facts">
+          <div class="my-bruist-card-fact">
+            <span
+              class="mini-icon"
+              data-icon="clock"
+              aria-hidden="true"
+            ></span>
+
+            <span>${escapeHtml(moment)}</span>
+          </div>
+
+          <div class="my-bruist-card-fact">
+            <span
+              class="mini-icon"
+              data-icon="pin"
+              aria-hidden="true"
+            ></span>
+
+            <span>${escapeHtml(location)}</span>
+          </div>
+        </div>
+
+        ${hasConflict
+      ? `
+              <div class="program-conflict">
+                Let op: dit onderdeel overlapt met een andere keuze.
+              </div>
+            `
+      : ""
+    }
+
+        <div class="my-bruist-card-actions">
+          <button
+            type="button"
+            class="program-card-action program-card-remove"
+            onclick="removeProgramSaved('${escapeJsString(item.id)}')"
+            aria-label="Verwijder ${escapeAttribute(item.title)} uit Mijn Bruist"
+          >
+            <span
+              class="program-action-icon"
+              data-icon="star"
+              aria-hidden="true"
+            ></span>
+
+            <span>Verwijder</span>
+          </button>
+
+          <button
+            type="button"
+            class="program-card-action program-card-map"
+            disabled
+          >
+            <span
+              class="program-action-icon"
+              data-icon="map"
+              aria-hidden="true"
+            ></span>
+
             <span>Toon op kaart</span>
           </button>
         </div>
