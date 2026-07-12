@@ -1672,3 +1672,214 @@ main {
 .festival-info-detail-text p:last-child {
   margin-bottom: 0;
 }
+
+/* PROGRAMMA — COMPACTE TOOLBAR */
+
+.program-toolbar {
+  margin: 10px 0 16px;
+}
+
+.program-search {
+  width: 100%;
+}
+
+.program-search input {
+  width: 100%;
+  min-height: 44px;
+  padding: 9px 14px;
+  border: 1px solid var(--kleur-lijn);
+  border-radius: 13px;
+  background: rgba(255, 255, 255, 0.88);
+  color: var(--kleur-tekst);
+  box-shadow: none;
+  font-size: 14px;
+}
+
+.program-toolbar-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.filter-toggle-button {
+  flex: 0 0 auto;
+  min-height: 34px;
+  padding: 6px 10px;
+  border: 1px solid rgba(53, 96, 169, 0.22);
+  border-radius: 10px;
+  background: rgba(53, 96, 169, 0.10);
+  color: var(--kleur-blauw);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.program-result-summary {
+  flex: 1 1 auto;
+  min-width: 0;
+  color: var(--kleur-subtekst);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.program-reset-button {
+  flex: 0 0 auto;
+  min-height: 32px;
+  padding: 4px 8px;
+  border: 0;
+  background: transparent;
+  color: var(--kleur-subtekst);
+  font-size: 12px;
+}
+
+.program-reset-button[hidden] {
+  display: none;
+}
+
+.program-filter-panel {
+  margin-top: 8px;
+}
+
+/* PROGRAMMA — COMPACTE KOP EN FILTERS */
+
+.program-screen .app-header {
+  margin-bottom: 0;
+}
+
+.program-header-count {
+  display: inline-block;
+  margin-top: 4px;
+  padding: 0;
+  color: var(--kleur-subtekst);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.program-toolbar {
+  margin: 0 0 16px;
+}
+
+.program-toolbar-row {
+  display: grid;
+  grid-template-columns: minmax(105px, 0.32fr) minmax(0, 0.68fr);
+  gap: 9px;
+  align-items: stretch;
+}
+
+.filter-toggle-button {
+  width: 100%;
+  min-height: 44px;
+  padding: 8px 11px;
+  border: 1px solid rgba(53, 96, 169, 0.24);
+  border-radius: 13px;
+  background: rgba(53, 96, 169, 0.10);
+  color: var(--kleur-blauw);
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.program-search {
+  min-width: 0;
+}
+
+.program-search input {
+  width: 100%;
+  min-height: 44px;
+  padding: 9px 14px;
+  border: 1px solid var(--kleur-lijn);
+  border-radius: 13px;
+  background: rgba(255, 255, 255, 0.88);
+  color: var(--kleur-tekst);
+  box-shadow: none;
+  font-size: 14px;
+}
+
+.program-filter-panel {
+  margin-top: 8px;
+  padding: 12px;
+  border: 1px solid var(--kleur-lijn);
+  border-radius: 15px;
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow: none;
+}
+
+.program-filter-panel[hidden] {
+  display: none;
+}
+
+.program-filters {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin: 0;
+}
+
+.filter-field {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 5px;
+  min-width: 0;
+  min-height: 0;
+}
+
+.filter-field:nth-child(3) {
+  grid-column: 1 / -1;
+}
+
+.filter-field>span {
+  color: var(--kleur-subtekst);
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.filter-field select {
+  width: 100%;
+  min-width: 0;
+  min-height: 38px;
+  padding: 6px 30px 6px 9px;
+  border: 1px solid var(--kleur-lijn);
+  border-radius: 10px;
+  background: var(--kleur-wit);
+  color: var(--kleur-tekst);
+  box-shadow: none;
+  font-size: 13px;
+}
+
+.program-reset-button {
+  display: block;
+  width: auto;
+  min-height: 30px;
+  margin: 10px 0 0 auto;
+  padding: 4px 7px;
+  border: 0;
+  background: transparent;
+  color: var(--kleur-magenta);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.program-reset-button[hidden] {
+  display: none;
+}
+
+@media (max-width: 380px) {
+  .program-header-count {
+    padding-left: 0;
+  }
+
+  .program-toolbar-row {
+    grid-template-columns: 100px minmax(0, 1fr);
+  }
+
+  .program-filters {
+    gap: 8px;
+  }
+
+  .filter-field select {
+    font-size: 12px;
+  }
+}

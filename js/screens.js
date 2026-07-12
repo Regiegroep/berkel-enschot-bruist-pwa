@@ -81,7 +81,10 @@ function renderProgramma() {
   if (store.loading) {
     return `
       <section class="screen">
-        ${screenHeader("Programma", "Het actuele programma uit Google Sheets.")}
+        ${screenHeader(
+      "Programma",
+      "Het actuele programma uit Google Sheets."
+    )}
         ${renderLoadingState()}
       </section>
     `;
@@ -90,7 +93,10 @@ function renderProgramma() {
   if (store.error) {
     return `
       <section class="screen">
-        ${screenHeader("Programma", "Het actuele programma uit Google Sheets.")}
+        ${screenHeader(
+      "Programma",
+      "Het actuele programma uit Google Sheets."
+    )}
         ${renderErrorState(store.error)}
       </section>
     `;
@@ -99,9 +105,20 @@ function renderProgramma() {
   const filtered = getFilteredProgramma();
   const activeFilterCount = activeProgramFilterCount();
 
+  const resultText =
+    filtered.length === store.programma.length
+      ? `${store.programma.length} activiteiten`
+      : `${filtered.length} van ${store.programma.length} activiteiten`;
+
   return `
     <section class="screen program-screen">
-      ${screenHeader("Programma", "Zoek en filter in het actuele programma.")}
+      ${screenHeader(
+    "Programma",
+    `Zoek en filter in het actuele programma.<br>
+   <span id="program-result-count" class="program-header-count">
+     ${escapeHtml(resultText)}
+   </span>`
+  )}
 
       <div class="program-toolbar">
         <div class="program-toolbar-row">
@@ -112,28 +129,25 @@ function renderProgramma() {
             aria-expanded="false"
             aria-controls="program-filter-panel"
           >
-            Filters${activeFilterCount ? ` (${activeFilterCount})` : ""}
+            Filters${activeFilterCount ? ` · ${activeFilterCount}` : ""}
           </button>
 
           <div class="program-search">
-            <label class="visually-hidden" for="search-program">Zoeken</label>
+            <label
+              class="visually-hidden"
+              for="search-program"
+            >
+              Zoeken
+            </label>
+
             <input
               id="search-program"
               type="search"
-              placeholder="Zoek"
+              placeholder="Zoek in programma"
               value="${escapeAttribute(appState.searchQuery)}"
             >
           </div>
         </div>
-
-        <button
-          type="button"
-          class="reset-filters-button program-reset-button"
-          id="reset-filters"
-          ${hasActiveProgramFilters() ? "" : "hidden"}
-        >
-          Wis filters
-        </button>
 
         <div
           class="program-filter-panel"
@@ -141,13 +155,16 @@ function renderProgramma() {
           hidden
         >
           ${renderProgramFilters()}
-        </div>
-      </div>
 
-      <div class="program-results-header">
-        <strong id="program-result-count">
-          ${resultCountText(filtered.length, store.programma.length)}
-        </strong>
+          <button
+            type="button"
+            class="reset-filters-button program-reset-button"
+            id="reset-filters"
+            ${hasActiveProgramFilters() ? "" : "hidden"}
+          >
+            Wis alle filters
+          </button>
+        </div>
       </div>
 
       <div id="program-results">
