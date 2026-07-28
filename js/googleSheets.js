@@ -126,12 +126,66 @@ function mapFestivalPartRow(row) {
 }
 
 function mapLocationRow(row) {
+  const normalizedRow = {};
+
+  Object.entries(row || {}).forEach(([key, value]) => {
+    const normalizedKey = String(key)
+      .trim()
+      .toLowerCase()
+      .replace(/\s+/g, "_");
+
+    normalizedRow[normalizedKey] = value;
+  });
+
+  function getValue(...keys) {
+    for (const key of keys) {
+      const normalizedKey = String(key)
+        .trim()
+        .toLowerCase()
+        .replace(/\s+/g, "_");
+
+      const value = normalizedRow[normalizedKey];
+
+      if (
+        value !== undefined &&
+        value !== null &&
+        String(value).trim() !== ""
+      ) {
+        return value;
+      }
+    }
+
+    return "";
+  }
+
   return {
-    id: firstValue(row, ["locatie_id", "id"]),
-    name: firstValue(row, ["locatie", "naam"]),
-    address: firstValue(row, ["adres"]),
-    mapX: firstValue(row, ["kaart_x", "x"]),
-    mapY: firstValue(row, ["kaart_y", "y"])
+    id: String(
+      getValue("locatie_id", "id", "naam", "locatie")
+    ).trim(),
+
+    name: String(
+      getValue("naam", "locatie", "locatie_id", "id")
+    ).trim(),
+
+    address: String(
+      getValue("adres")
+    ).trim(),
+
+    map: String(
+      getValue("kaart", "map")
+    ).trim(),
+
+    mapX: String(
+      getValue("x", "kaart_x", "map_x")
+    ).trim(),
+
+    mapY: String(
+      getValue("y", "kaart_y", "map_y")
+    ).trim(),
+
+    icon: String(
+      getValue("icon", "icoon")
+    ).trim()
   };
 }
 

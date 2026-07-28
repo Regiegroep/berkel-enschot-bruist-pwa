@@ -480,6 +480,11 @@ function renderProgramDetail() {
 
   const category = programCategory(item);
   const location = programLocation(item);
+  const mapLocation = String(
+    item.location?.name ||
+    item.locationId ||
+    ""
+  ).trim();
   const part = programPart(item);
   const organization = programOrganization(item);
   const address = item.location?.address || "";
@@ -572,9 +577,18 @@ function renderProgramDetail() {
     }
           </button>
 
-          <button type="button" class="secondary-button" disabled>
-            Toon op kaart — volgt later
-          </button>
+          ${mapLocation
+      ? `
+            <button
+              type="button"
+              class="secondary-button"
+              onclick="showLocationOnMap('${escapeJsString(mapLocation)}', '${escapeJsString(item.id)}')"
+            >
+              Toon op kaart
+            </button>
+          `
+      : ""
+    }
         </div>
       </article>
     </section>
@@ -704,22 +718,533 @@ function renderMijnBruist() {
 }
 
 function renderPlattegrond() {
+  const maps = {
+    buiten: {
+      label: "Buiten",
+      title: "Festivalgebied buiten",
+      image: "./images/kaart_buiten.jpg",
+      alt: "Plattegrond van het festivalgebied buiten"
+    },
+
+    beganegrond: {
+      label: "Begane grond",
+      title: "Ons Koningsoord – begane grond",
+      image: "./images/kaart_beganegrond.jpg",
+      alt: "Plattegrond van de begane grond van Ons Koningsoord"
+    },
+
+    souterrain: {
+      label: "Souterrain",
+      title: "Ons Koningsoord – souterrain",
+      image: "./images/kaart_souterrain.jpg",
+      alt: "Plattegrond van het souterrain van Ons Koningsoord"
+    }
+  };
+
+  const safeText = (value) =>
+    String(value ?? "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+
+  activePlattegrondMap =
+    normalizePlattegrondMap(activePlattegrondMap);
+
+  const currentMap =
+    maps[activePlattegrondMap] || maps.buiten;
+
+  const sourceLocations =
+    typeof store !== "undefined" &&
+      Array.isArray(store.locaties)
+      ? store.locaties
+      : [];
+
+  const sourceProgramma =
+    typeof store !== "undefined" &&
+      Array.isArray(store.programma)
+      ? store.programma
+      : [];
+
+  const normalizedLocations = sourceLocations
+    .map((location) => {
+      const mapValue =
+        location.map ??
+        location.kaart ??
+        "";
+
+      const xValue =
+        location.mapX ??
+        location.kaartX ??
+        location.kaart_x ??
+        location.x ??
+        "";
+
+      const yValue =
+        location.mapY ??
+        location.kaartY ??
+        location.kaart_y ??
+        location.y ??
+        "";
+
+      const x = Number(
+        String(xValue)
+          .trim()
+          .replace(",", ".")
+      );
+
+      const y = Number(
+        String(yValue)
+          .trim()
+          .replace(",", ".")
+      );
+
+      return {
+        id: String(
+          location.id ??
+          location.locatie_id ??
+          ""
+        ),
+
+        name:
+          location.name ??
+          location.naam ??
+          location.locatie ??
+          location.id ??
+          "Locatie",
+
+        map: normalizePlattegrondMap(mapValue),
+
+        x,
+        y,
+
+        icon:
+          location.icon ??
+          location.icoon ??
+          ""
+      };
+    })
+    .filter((location) => {
+      return (
+        location.id &&
+        location.map === activePlattegrondMap &&
+        Number.isFinite(location.x) &&
+        Number.isFinite(location.y) &&
+        location.x >= 0 &&
+        location.x <= 100 &&
+        location.y >= 0 &&
+        location.y <= 100
+      );
+    });
+
+  const selectedLocation =
+    normalizedLocations.find(
+      (location) =>
+        location.id ===
+        String(appState.selectedPlattegrondLocationId || "")
+    ) || null;
+
+  function getProgramLocationId(item) {
+    return String(
+      item.locationId ??
+      item.locatieId ??
+      item.locatie_id ??
+      item.location?.id ??
+      ""
+    );
+  }
+
+  const selectedLocationProgramma =
+    selectedLocation
+      ? sourceProgramma.filter(
+        (item) =>
+          getProgramLocationId(item).trim().toLowerCase() ===
+          String(selectedLocation.name || "").trim().toLowerCase()
+      )
+      : [];
+
+  const selectedProgramFromMap =
+    selectedLocation && appState.selectedProgramFromMapId
+      ? selectedLocationProgramma.find(
+        (item) =>
+          String(item.id) ===
+          String(appState.selectedProgramFromMapId)
+      ) || null
+      : null;
+
+  const buttonsHtml = Object.entries(maps)
+    .map(([mapId, map]) => {
+      const active =
+        mapId === activePlattegrondMap;
+
+      return `
+        <button
+          type="button"
+          class="festival-map-switch ${active ? "is-active" : ""
+        }"
+          onclick="setPlattegrondMap('${mapId}')"
+          aria-pressed="${active}"
+        >
+          ${safeText(map.label)}
+        </button>
+      `;
+    })
+    .join("");
+
+  const markersHtml = normalizedLocations
+    .map((location, index) => {
+      const isSelected =
+        location.id ===
+        String(
+          appState.selectedPlattegrondLocationId || ""
+        );
+
+      const markerIcon =
+        String(location.icon || "").trim() || "●";
+
+      return `
+      <button
+        type="button"
+        class="festival-map-marker"
+        onclick="selectPlattegrondLocation(
+          '${safeText(location.id)}'
+        )"
+        title="${safeText(location.name)}"
+        aria-label="Bekijk ${safeText(location.name)}"
+        style="
+          position: absolute;
+          left: ${location.x}%;
+          top: ${location.y}%;
+          z-index: ${isSelected ? 500 : 100 + index};
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: ${isSelected ? 31 : 20}px;
+          height: ${isSelected ? 31 : 20}px;
+          padding: 0;
+          border: ${isSelected ? "4px" : "2px"} solid #ffffff;
+          border-radius: 50%;
+          background: ${isSelected ? "#173b69" : "#d93636"
+        };
+          color: #ffffff;
+          opacity: ${selectedLocation && !isSelected ? 0.42 : 1};
+          box-shadow: ${isSelected
+          ? "0 0 0 4px rgba(23, 59, 105, 0.28), 0 4px 12px rgba(0, 0, 0, 0.42)"
+          : "0 2px 6px rgba(0, 0, 0, 0.32)"};
+          transform: translate(-50%, -50%);
+          font-size: ${isSelected ? 16 : 10}px;
+          line-height: 1;
+          cursor: pointer;
+          transition: opacity 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+        "
+      >
+        ${icon(markerIcon)}
+      </button>
+    `;
+    })
+    .join("");
+
+  const programmaHtml =
+    selectedProgramFromMap
+      ? (() => {
+        const timeParts = [
+          selectedProgramFromMap.day,
+          selectedProgramFromMap.startTime
+        ].filter(Boolean);
+
+        return `
+          <button
+            type="button"
+            onclick="showProgramCardFromMap(
+              '${escapeJsString(selectedProgramFromMap.id)}'
+            )"
+            aria-label="Ga terug naar ${safeText(selectedProgramFromMap.title)}"
+            style="
+              display: block;
+              width: 100%;
+              margin-top: 14px;
+              padding: 12px 14px;
+              border: 0;
+              border-radius: 12px;
+              background: #f5f3ed;
+              color: #17212b;
+              text-align: left;
+              font: inherit;
+              cursor: pointer;
+            "
+          >
+            <strong
+              style="
+                display: block;
+                color: #17212b;
+                font-size: 16px;
+              "
+            >
+              ${safeText(selectedProgramFromMap.title)}
+            </strong>
+
+            ${timeParts.length
+            ? `
+                  <span
+                    style="
+                      display: block;
+                      margin-top: 4px;
+                      color: #65605a;
+                      font-size: 13px;
+                    "
+                  >
+                    ${safeText(timeParts.join(" · "))}
+                  </span>
+                `
+            : ""
+          }
+          </button>
+        `;
+      })()
+      : selectedLocationProgramma.length > 0
+        ? `
+          <div
+            style="
+              display: grid;
+              gap: 8px;
+              margin-top: 14px;
+            "
+          >
+            ${selectedLocationProgramma
+          .slice(0, 4)
+          .map((item) => {
+            const timeParts = [
+              item.day,
+              item.startTime
+            ].filter(Boolean);
+
+            return `
+                  <div
+                    style="
+                      padding: 10px 12px;
+                      border-radius: 10px;
+                      background: #f5f3ed;
+                    "
+                  >
+                    <strong
+                      style="
+                        display: block;
+                        color: #17212b;
+                      "
+                    >
+                      ${safeText(item.title)}
+                    </strong>
+
+                    ${timeParts.length
+                ? `
+                          <span
+                            style="
+                              display: block;
+                              margin-top: 3px;
+                              color: #65605a;
+                              font-size: 13px;
+                            "
+                          >
+                            ${safeText(timeParts.join(" · "))}
+                          </span>
+                        `
+                : ""
+              }
+                  </div>
+                `;
+          })
+          .join("")}
+
+            ${selectedLocationProgramma.length > 4
+          ? `
+                  <p
+                    style="
+                      margin: 2px 0 0;
+                      color: #65605a;
+                      font-size: 13px;
+                    "
+                  >
+                    En nog ${selectedLocationProgramma.length - 4
+          } andere activiteiten.
+                  </p>
+                `
+          : ""
+        }
+          </div>
+        `
+        : `
+          <p
+            style="
+              margin: 10px 0 0;
+              color: #65605a;
+            "
+          >
+            Voor deze locatie zijn nog geen programmaonderdelen
+            gevonden.
+          </p>
+        `;
+
+  const selectedLocationHtml =
+    selectedLocation
+      ? `
+        <section
+          id="selected-map-location"
+          style="
+            margin-top: 18px;
+            padding: 18px;
+            border-radius: 18px;
+            background: #ffffff;
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+          "
+        >
+          <div
+            style="
+              display: flex;
+              align-items: flex-start;
+              justify-content: space-between;
+              gap: 12px;
+            "
+          >
+            <div>
+              <p
+                style="
+                  margin: 0 0 3px;
+                  color: #8b6500;
+                  font-size: 12px;
+                  font-weight: 800;
+                  text-transform: uppercase;
+                  letter-spacing: 0.05em;
+                "
+              >
+                Geselecteerde locatie
+              </p>
+
+              <h3
+                style="
+                  margin: 0;
+                  color: #17212b;
+                  font-size: 21px;
+                "
+              >
+                ${safeText(selectedLocation.name)}
+              </h3>
+            </div>
+
+            <button
+              type="button"
+              onclick="selectPlattegrondLocation(
+                '${safeText(selectedLocation.id)}'
+              )"
+              aria-label="Sluit locatie-informatie"
+              style="
+                width: 34px;
+                height: 34px;
+                padding: 0;
+                border: 0;
+                border-radius: 50%;
+                background: #f2f0e9;
+                color: #17212b;
+                font-size: 22px;
+                cursor: pointer;
+              "
+            >
+              ×
+            </button>
+          </div>
+
+          ${programmaHtml}
+
+          ${selectedLocationProgramma.length > 0
+        ? `
+                <button
+                  type="button"
+                  onclick="showProgramAtLocation(
+                    '${safeText(selectedLocation.name)}'
+                  )"
+                  style="
+                    width: 100%;
+                    margin-top: 14px;
+                    padding: 12px 16px;
+                    border: 1px solid rgba(23, 33, 43, 0.18);
+                    border-radius: 12px;
+                    background: #ffffff;
+                    color: #17212b;
+                    font: inherit;
+                    font-weight: 650;
+                    cursor: pointer;
+                  "
+                >
+                  Bekijk alle activiteiten op deze locatie
+                </button>
+              `
+        : ""
+      }
+        </section>
+      `
+      : "";
+
   return `
     <section class="screen">
-      ${screenHeader("Plattegrond", "Kies straks welke kaart je wilt bekijken.")}
-      <div class="map-options">
-        <article class="map-card">
-          <span class="badge accent-purple">Festivalgebied</span>
-          <h3>Festivalkaart</h3>
-          <p>Overzicht van alle hoofdlocaties in het festivalgebied.</p>
-        </article>
+      ${screenHeader(
+    "Plattegrond",
+    "Bekijk waar de verschillende festivalactiviteiten plaatsvinden."
+  )}
 
-        <article class="map-card">
-          <span class="badge accent-blue">Binnenlocaties</span>
-          <h3>Ons Koningsoord-kaart</h3>
-          <p>Detailkaart voor locaties binnen Ons Koningsoord.</p>
-        </article>
+      <div
+        class="festival-map-switcher"
+        role="group"
+        aria-label="Kies een plattegrond"
+      >
+        ${buttonsHtml}
       </div>
+
+      <div class="festival-map-heading">
+        <h2>${safeText(currentMap.title)}</h2>
+
+        <span class="festival-map-count">
+          ${normalizedLocations.length}
+          ${normalizedLocations.length === 1
+      ? "locatie"
+      : "locaties"
+    }
+        </span>
+      </div>
+
+      <div style="overflow-x: auto;">
+        <div
+          style="
+            position: relative;
+            width: 100%;
+            min-width: 300px;
+          "
+        >
+          <img
+            src="${safeText(currentMap.image)}"
+            alt="${safeText(currentMap.alt)}"
+            class="festival-map-image"
+            style="
+              display: block;
+              width: 100%;
+              height: auto;
+            "
+          >
+
+          <div
+            aria-label="Locaties op de plattegrond"
+            style="
+              position: absolute;
+              inset: 0;
+              width: 100%;
+              height: 100%;
+            "
+          >
+            ${markersHtml}
+          </div>
+        </div>
+      </div>
+
+      ${selectedLocationHtml}
     </section>
   `;
 }
@@ -894,6 +1419,11 @@ function festivalInfoCard(item) {
 function programCard(item, context = "programma") {
   const category = programCategory(item);
   const location = programLocation(item);
+  const mapLocation = String(
+    item.location?.name ||
+    item.locationId ||
+    ""
+  ).trim();
   const part = programPart(item);
 
   const description =
@@ -904,6 +1434,7 @@ function programCard(item, context = "programma") {
   const colorClass = categoryColorClassFromItem(item);
   const moment = formatProgramTime(item);
   const imageUrl = safeExternalUrl(item.imageUrl);
+  const websiteUrl = safeExternalUrl(item.websiteUrl);
   const isSaved = isProgramSaved(item.id);
 
   const tags = String(item.tags || "")
@@ -913,7 +1444,10 @@ function programCard(item, context = "programma") {
     .slice(0, 3);
 
   return `
-    <article class="program-card ${colorClass}">
+    <article
+      class="program-card ${colorClass}"
+      data-program-id="${escapeAttribute(item.id)}"
+    >
       <span
         class="program-card-accent"
         aria-hidden="true"
@@ -960,15 +1494,6 @@ function programCard(item, context = "programma") {
         <p class="program-card-description">
           ${escapeHtml(description)}
         </p>
-
-        ${context === "mijn" && hasSavedProgramConflict(item)
-      ? `
-      <div class="program-conflict" role="status">
-        Let op: dit onderdeel overlapt met een andere keuze.
-      </div>
-    `
-      : ""
-    }
 
         <div class="program-card-facts">
           <div class="program-card-fact program-card-fact-time">
@@ -1027,6 +1552,7 @@ function programCard(item, context = "programma") {
                     data-icon="star"
                     aria-hidden="true"
                   ></span>
+
                   <span>Verwijder</span>
                 </button>
               `
@@ -1042,6 +1568,7 @@ function programCard(item, context = "programma") {
                       data-icon="star"
                       aria-hidden="true"
                     ></span>
+
                     <span>In Mijn Bruist</span>
                   </button>
                 `
@@ -1057,23 +1584,52 @@ function programCard(item, context = "programma") {
                       data-icon="star"
                       aria-hidden="true"
                     ></span>
+
                     <span>Mijn Bruist</span>
                   </button>
                 `
     }
 
-          <button
-            type="button"
-            class="program-card-action program-card-map"
-            disabled
-          >
-            <span
-              class="program-action-icon"
-              data-icon="map"
-              aria-hidden="true"
-            ></span>
-            <span>Toon op kaart</span>
-          </button>
+          ${websiteUrl
+      ? `
+                <a
+                  class="program-card-action program-card-more"
+                  href="${escapeAttribute(websiteUrl)}"
+                  target="_blank"
+                  rel="noopener"
+                  aria-label="Meer informatie over ${escapeAttribute(item.title)}"
+                >
+                  <span
+                    class="program-action-icon"
+                    data-icon="info"
+                    aria-hidden="true"
+                  ></span>
+
+                  <span>Meer info</span>
+                </a>
+              `
+      : ""
+    }
+
+          ${mapLocation
+      ? `
+                <button
+                  type="button"
+                  class="program-card-action program-card-map"
+                  onclick="showLocationOnMap('${escapeJsString(mapLocation)}', '${escapeJsString(item.id)}')"
+                  aria-label="Toon ${escapeAttribute(mapLocation)} op de plattegrond"
+                >
+                  <span
+                    class="program-action-icon"
+                    data-icon="map"
+                    aria-hidden="true"
+                  ></span>
+
+                  <span>Toon op kaart</span>
+                </button>
+              `
+      : ""
+    }
         </div>
       </div>
     </article>
@@ -1082,6 +1638,11 @@ function programCard(item, context = "programma") {
 
 function myBruistCard(item) {
   const location = programLocation(item);
+  const mapLocation = String(
+    item.location?.name ||
+    item.locationId ||
+    ""
+  ).trim();
   const colorClass = categoryColorClassFromItem(item);
   const moment = formatProgramTime(item);
   const imageUrl = safeExternalUrl(item.imageUrl);
@@ -1161,19 +1722,25 @@ function myBruistCard(item) {
             <span>Verwijder</span>
           </button>
 
-          <button
-            type="button"
-            class="program-card-action program-card-map"
-            disabled
-          >
-            <span
-              class="program-action-icon"
-              data-icon="map"
-              aria-hidden="true"
-            ></span>
+          ${mapLocation
+      ? `
+                <button
+                  type="button"
+                  class="program-card-action program-card-map"
+                  onclick="showLocationOnMap('${escapeJsString(mapLocation)}', '${escapeJsString(item.id)}')"
+                  aria-label="Toon ${escapeAttribute(mapLocation)} op de plattegrond"
+                >
+                  <span
+                    class="program-action-icon"
+                    data-icon="map"
+                    aria-hidden="true"
+                  ></span>
 
-            <span>Toon op kaart</span>
-          </button>
+                  <span>Toon op kaart</span>
+                </button>
+              `
+      : ""
+    }
         </div>
       </div>
     </article>

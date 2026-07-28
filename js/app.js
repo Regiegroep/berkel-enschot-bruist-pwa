@@ -4,6 +4,8 @@ const appState = {
   selectedFestivalInfoId: null,
   searchQuery: "",
   savedProgramIds: loadSavedProgramIds(),
+  selectedPlattegrondLocationId: null,
+  selectedProgramFromMapId: null,
 
   filters: {
     day: "",
@@ -99,7 +101,19 @@ async function initializeApp() {
   }
 }
 
-function navigateTo(screenName) {
+function navigateTo(screenName, options = {}) {
+  const preserveMapSelection = Boolean(
+    options.preserveMapSelection
+  );
+
+  if (
+    screenName === "kaart" &&
+    !preserveMapSelection
+  ) {
+    appState.selectedPlattegrondLocationId = null;
+    appState.selectedProgramFromMapId = null;
+  }
+
   appState.currentScreen = screenName;
 
   if (screenName === "festivalinfo") {
@@ -241,3 +255,171 @@ function renderProgramResultsOnly() {
 }
 
 document.addEventListener("DOMContentLoaded", initializeApp);
+
+let activePlattegrondMap = "buiten";
+
+function normalizePlattegrondMap(value) {
+  const map = String(value || "")
+    .trim()
+    .toLowerCase();
+
+  if (
+    map === "beganegrond" ||
+    map === "begane-grond" ||
+    map === "binnen-begane" ||
+    map === "binnen-beganegrond" ||
+    map === "binnen-begane-grond"
+  ) {
+    return "beganegrond";
+  }
+
+  if (
+    map === "souterrain" ||
+    map === "souterain" ||
+    map === "binnen-souterrain" ||
+    map === "binnen-souterain"
+  ) {
+    return "souterrain";
+  }
+
+  return "buiten";
+}
+
+function setPlattegrondMap(mapType) {
+  activePlattegrondMap = normalizePlattegrondMap(mapType);
+  navigateTo("kaart");
+}
+
+function selectPlattegrondLocation(locationId) {
+  const id = String(locationId || "");
+
+  appState.selectedProgramFromMapId = null;
+
+  appState.selectedPlattegrondLocationId =
+    appState.selectedPlattegrondLocationId === id
+      ? null
+      : id;
+
+  navigateTo("kaart", { preserveMapSelection: true });
+}
+
+function showLocationOnMap(locationValue, programId = "") {
+  const requestedLocation = String(locationValue || "")
+    .trim()
+    .toLowerCase();
+
+  const location = Array.isArray(store.locaties)
+    ? store.locaties.find((item) => {
+        const id = String(
+          item.id ??
+          item.locatie_id ??
+          ""
+        )
+          .trim()
+          .toLowerCase();
+
+        const name = String(
+          item.name ??
+          item.naam ??
+          item.locatie ??
+          item.id ??
+          ""
+        )
+          .trim()
+          .toLowerCase();
+
+        return (
+          id === requestedLocation ||
+          name === requestedLocation
+        );
+      })
+    : null;
+
+  if (!location) {
+    navigateTo("kaart");
+    return;
+  }
+
+  const selectedId = String(
+    location.id ??
+    location.locatie_id ??
+    location.name ??
+    location.naam ??
+    location.locatie ??
+    ""
+  ).trim();
+
+  const mapValue =
+    location.map ??
+    location.kaart ??
+    "";
+
+  appState.selectedPlattegrondLocationId = selectedId;
+  appState.selectedProgramFromMapId = String(programId || "").trim() || null;
+  activePlattegrondMap =
+    normalizePlattegrondMap(mapValue);
+
+  navigateTo("kaart", { preserveMapSelection: true });
+
+  window.setTimeout(() => {
+    const selectedCard =
+      document.getElementById("selected-map-location");
+
+    if (selectedCard) {
+      selectedCard.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
+    }
+  }, 150);
+}
+
+function showProgramCardFromMap(programId) {
+  const id = String(programId || "").trim();
+
+  appState.selectedProgramFromMapId = null;
+  appState.searchQuery = "";
+  appState.filters = {
+    day: "",
+    category: "",
+    part: "",
+    location: "",
+    tag: ""
+  };
+
+  navigateTo("programma");
+
+  window.setTimeout(() => {
+    const card = Array.from(
+      document.querySelectorAll("[data-program-id]")
+    ).find(
+      (element) => String(element.dataset.programId || "") === id
+    );
+
+    if (card) {
+      card.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+      });
+    }
+  }, 150);
+}
+
+function showProgramAtLocation(locationName) {
+  appState.searchQuery = "";
+
+  appState.filters = {
+    day: "",
+    category: "",
+    part: "",
+    location: String(locationName || ""),
+    tag: ""
+  };
+
+  navigateTo("programma");
+}
+
+window.selectPlattegrondLocation = selectPlattegrondLocation;
+window.showLocationOnMap = showLocationOnMap;
+window.showProgramAtLocation = showProgramAtLocation;
+window.showProgramCardFromMap = showProgramCardFromMap;
