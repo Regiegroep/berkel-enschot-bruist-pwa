@@ -2105,3 +2105,80 @@ main {
   width: 100%;
   height: 100%;
 }
+
+/* T-007a: compacte PWA-installatiekaart op Home */
+.pwa-install-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.7rem;
+  margin: 0.75rem 0 1rem;
+  padding: 0.75rem 2.25rem 0.75rem 0.9rem;
+  border: 1px solid rgba(193, 27, 93, 0.18);
+  border-radius: 0.85rem;
+  background: #ffffff;
+  box-shadow: 0 0.15rem 0.55rem rgba(23, 33, 43, 0.07);
+}
+
+.pwa-install-card[hidden] {
+  display: none;
+}
+
+.pwa-install-copy {
+  display: grid;
+  gap: 0.12rem;
+  min-width: 0;
+}
+
+.pwa-install-copy strong {
+  color: #17212b;
+  font-size: 0.9rem;
+  line-height: 1.2;
+}
+
+.pwa-install-copy span {
+  color: #65605a;
+  font-size: 0.76rem;
+  line-height: 1.3;
+}
+
+.pwa-install-button {
+  min-height: 2rem;
+  padding: 0.42rem 0.72rem;
+  border: 0;
+  border-radius: 0.65rem;
+  background: #c11b5d;
+  color: #ffffff;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.pwa-install-close {
+  position: absolute;
+  top: 0.28rem;
+  right: 0.38rem;
+  width: 1.55rem;
+  height: 1.55rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #77716a;
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+@media (max-width: 380px) {
+  .pwa-install-card {
+    grid-template-columns: 1fr;
+    gap: 0.55rem;
+  }
+
+  .pwa-install-button {
+    justify-self: start;
+  }
+}

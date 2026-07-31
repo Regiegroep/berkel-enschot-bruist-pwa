@@ -33,6 +33,35 @@ function renderHome() {
           >
         </figure>
 
+        <aside
+          class="pwa-install-card"
+          id="pwa-install-card"
+          hidden
+          aria-labelledby="pwa-install-title"
+        >
+          <button
+            type="button"
+            class="pwa-install-close"
+            id="pwa-install-close"
+            aria-label="Verberg installatie-informatie"
+          >
+            ×
+          </button>
+
+          <div class="pwa-install-copy">
+            <strong id="pwa-install-title">Installeer de Bruist-app</strong>
+            <span id="pwa-install-text">Sneller openen, altijd je programma bij de hand.</span>
+          </div>
+
+          <button
+            type="button"
+            class="pwa-install-button"
+            id="pwa-install-button"
+          >
+            Installeer
+          </button>
+        </aside>
+
         <div class="home-menu">
           ${homeMenuItem(
     "Programma",

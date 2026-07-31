@@ -17,6 +17,9 @@ const appState = {
   }
 };
 
+let deferredInstallPrompt = null;
+const PWA_INSTALL_DISMISSED_KEY = "beb-pwa-install-dismissed";
+
 function loadSavedProgramIds() {
   try {
     const saved = localStorage.getItem("beb-mijn-bruist");
@@ -162,7 +165,107 @@ function setupCurrentScreenInteractions() {
   if (appState.currentScreen === "programma") {
     setupProgramInteractions();
   }
+
+  if (appState.currentScreen === "home") {
+    setupPwaInstallCard();
+  }
 }
+
+function isPwaStandalone() {
+  return (
+    window.matchMedia("(display-mode: standalone)").matches ||
+    window.navigator.standalone === true
+  );
+}
+
+function isIosDevice() {
+  return /iphone|ipad|ipod/i.test(window.navigator.userAgent);
+}
+
+function isMobileDevice() {
+  return /android|iphone|ipad|ipod/i.test(window.navigator.userAgent);
+}
+
+function shouldHidePwaInstallCard() {
+  return (
+    isPwaStandalone() ||
+    localStorage.getItem(PWA_INSTALL_DISMISSED_KEY) === "ja" ||
+    !isMobileDevice()
+  );
+}
+
+function setupPwaInstallCard() {
+  const card = document.getElementById("pwa-install-card");
+  const installButton = document.getElementById("pwa-install-button");
+  const closeButton = document.getElementById("pwa-install-close");
+  const installText = document.getElementById("pwa-install-text");
+
+  if (!card || !installButton || !closeButton || !installText) {
+    return;
+  }
+
+  if (shouldHidePwaInstallCard()) {
+    card.hidden = true;
+    return;
+  }
+
+  const isIos = isIosDevice();
+  const canPromptInstall = Boolean(deferredInstallPrompt);
+
+  if (!isIos && !canPromptInstall) {
+    card.hidden = true;
+    return;
+  }
+
+  card.hidden = false;
+
+  if (isIos) {
+    installText.textContent =
+      "Tik in Safari op Deel en kies Zet op beginscherm.";
+    installButton.hidden = true;
+  } else {
+    installText.textContent =
+      "Sneller openen, altijd je programma bij de hand.";
+    installButton.hidden = false;
+  }
+
+  closeButton.addEventListener("click", () => {
+    localStorage.setItem(PWA_INSTALL_DISMISSED_KEY, "ja");
+    card.hidden = true;
+  });
+
+  installButton.addEventListener("click", async () => {
+    if (!deferredInstallPrompt) {
+      return;
+    }
+
+    deferredInstallPrompt.prompt();
+    const choice = await deferredInstallPrompt.userChoice;
+
+    if (choice.outcome === "accepted") {
+      card.hidden = true;
+    }
+
+    deferredInstallPrompt = null;
+  });
+}
+
+window.addEventListener("beforeinstallprompt", (event) => {
+  event.preventDefault();
+  deferredInstallPrompt = event;
+
+  if (appState.currentScreen === "home") {
+    setupPwaInstallCard();
+  }
+});
+
+window.addEventListener("appinstalled", () => {
+  deferredInstallPrompt = null;
+  const card = document.getElementById("pwa-install-card");
+  if (card) {
+    card.hidden = true;
+  }
+});
 
 function setupProgramInteractions() {
   const searchInput = document.getElementById("search-program");
