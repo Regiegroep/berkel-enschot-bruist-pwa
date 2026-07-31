@@ -521,6 +521,8 @@ function renderProgramDetail() {
   const description = item.description || item.shortDescription || "Meer informatie volgt.";
   const colorClass = categoryColorClassFromItem(item);
   const websiteUrl = safeExternalUrl(item.websiteUrl);
+  const actionUrl = safeExternalUrl(item.actionUrl);
+  const actionText = String(item.actionText || "Aanmelden").trim() || "Aanmelden";
   const tags = String(item.tags || "")
     .split(",")
     .map((tag) => tag.trim())
@@ -591,6 +593,18 @@ function renderProgramDetail() {
       ? `<a class="primary-button" href="${escapeAttribute(websiteUrl)}" target="_blank" rel="noopener">
                    Meer informatie op website
                  </a>`
+      : ""
+    }
+
+          ${actionUrl
+      ? `<a
+           class="primary-button program-action-cta"
+           href="${escapeAttribute(actionUrl)}"
+           target="_blank"
+           rel="noopener"
+         >
+           ${escapeHtml(actionText)}
+         </a>`
       : ""
     }
 
@@ -1489,6 +1503,8 @@ function programCard(item, context = "programma") {
   const moment = formatProgramTime(item);
   const imageUrl = safeExternalUrl(item.imageUrl);
   const websiteUrl = safeExternalUrl(item.websiteUrl);
+  const actionUrl = safeExternalUrl(item.actionUrl);
+  const actionText = String(item.actionText || "Aanmelden").trim() || "Aanmelden";
   const isSaved = isProgramSaved(item.id);
 
   const tags = String(item.tags || "")
@@ -1660,6 +1676,27 @@ function programCard(item, context = "programma") {
                   ></span>
 
                   <span>Meer info</span>
+                </a>
+              `
+      : ""
+    }
+
+          ${actionUrl
+      ? `
+                <a
+                  class="program-card-action program-card-cta"
+                  href="${escapeAttribute(actionUrl)}"
+                  target="_blank"
+                  rel="noopener"
+                  aria-label="${escapeAttribute(actionText)} voor ${escapeAttribute(item.title)}"
+                >
+                  <span
+                    class="program-action-icon"
+                    data-icon="calendar"
+                    aria-hidden="true"
+                  ></span>
+
+                  <span>${escapeHtml(actionText)}</span>
                 </a>
               `
       : ""

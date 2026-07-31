@@ -2182,3 +2182,30 @@ main {
     justify-self: start;
   }
 }
+
+/* T-008: opvallende actieknop voor aanmelden, reserveren of tickets */
+.program-card-cta {
+  padding: 0.42rem 0.7rem;
+  border-radius: 0.65rem;
+  background: var(--kleur-oranje);
+  color: #ffffff;
+  text-decoration: none;
+  box-shadow: 0 0.16rem 0.42rem rgba(232, 78, 34, 0.18);
+}
+
+.program-card-cta:hover,
+.program-card-cta:focus-visible {
+  background: #cf3f1c;
+  color: #ffffff;
+}
+
+.program-action-cta {
+  background: var(--kleur-oranje);
+  color: #ffffff;
+}
+
+.program-action-cta:hover,
+.program-action-cta:focus-visible {
+  background: #cf3f1c;
+  color: #ffffff;
+}

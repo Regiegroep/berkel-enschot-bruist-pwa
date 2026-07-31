@@ -102,6 +102,9 @@ function mapProgramRow(row, index) {
     locationId: firstValue(row, ["locatie_id", "locatie"]),
     audience: firstValue(row, ["doelgroep"]),
     websiteUrl: firstValue(row, ["link_meer_info", "url", "website"]),
+    actionUrl: firstValue(row, ["actie_url", "actie_link", "aanmeld_url"]),
+    actionText: firstValue(row, ["actie_tekst", "tekst_actieknop", "aanmeld_tekst"]),
+    actionColor: firstValue(row, ["actie_kleur"]),
     imageUrl: firstValue(row, ["afbeelding_url", "afbeelding"]),
     status: firstValue(row, ["status"]),
     raw: row
