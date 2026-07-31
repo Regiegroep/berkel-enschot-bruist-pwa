@@ -1685,6 +1685,7 @@ function programCard(item, context = "programma") {
       ? `
                 <a
                   class="program-card-action program-card-cta"
+                  style="color: #ffffff !important;"
                   href="${escapeAttribute(actionUrl)}"
                   target="_blank"
                   rel="noopener"
@@ -1831,6 +1832,7 @@ function myBruistCard(item) {
       ? `
                 <a
                   class="program-card-action program-card-cta"
+                  style="color: #ffffff !important;"
                   href="${escapeAttribute(actionUrl)}"
                   target="_blank"
                   rel="noopener"
