@@ -374,17 +374,9 @@ function showLocationOnMap(locationValue, programId = "") {
 
   navigateTo("kaart", { preserveMapSelection: true });
 
-  window.setTimeout(() => {
-    const selectedCard =
-      document.getElementById("selected-map-location");
-
-    if (selectedCard) {
-      selectedCard.scrollIntoView({
-        behavior: "smooth",
-        block: "start"
-      });
-    }
-  }, 150);
+  window.requestAnimationFrame(() => {
+    window.scrollTo({ top: 0, behavior: "auto" });
+  });
 }
 
 function showProgramCardFromMap(programId) {

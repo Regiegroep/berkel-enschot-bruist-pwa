@@ -1201,25 +1201,41 @@ function renderPlattegrond() {
     "Bekijk waar de verschillende festivalactiviteiten plaatsvinden."
   )}
 
-      ${isFocusedProgramMap
-      ? `
-          <button
-            type="button"
-            class="back-button"
-            onclick="returnFromMapToPreviousScreen()"
-          >
-            <span aria-hidden="true">←</span>
-            <span>${safeText(mapReturnLabel)}</span>
-          </button>
-        `
-      : ""
-    }
-
       <div
         class="festival-map-switcher"
         role="group"
         aria-label="Kies een plattegrond"
       >
+        ${isFocusedProgramMap
+          ? `
+              <button
+                type="button"
+                onclick="returnFromMapToPreviousScreen()"
+                aria-label="${safeText(mapReturnLabel)}"
+                style="
+                  display: inline-flex;
+                  align-items: center;
+                  gap: 4px;
+                  min-height: 32px;
+                  padding: 5px 8px;
+                  border: 0;
+                  border-radius: 8px;
+                  background: transparent;
+                  color: #173b69;
+                  font: inherit;
+                  font-size: 13px;
+                  font-weight: 700;
+                  cursor: pointer;
+                  white-space: nowrap;
+                "
+              >
+                <span aria-hidden="true" style="font-size: 16px; line-height: 1;">←</span>
+                <span>Terug</span>
+              </button>
+            `
+          : ""
+        }
+
         ${buttonsHtml}
       </div>
 
