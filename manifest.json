@@ -1,15 +1,33 @@
 {
+  "id": "./",
   "name": "Berkel-Enschot Bruist",
   "short_name": "Bruist",
-  "start_url": ".",
+  "description": "Programma, persoonlijke favorieten, festivalinformatie en plattegronden voor Berkel-Enschot Bruist.",
+  "lang": "nl-NL",
+  "start_url": "./",
+  "scope": "./",
   "display": "standalone",
+  "orientation": "portrait-primary",
   "background_color": "#F8F6F2",
   "theme_color": "#C11B5D",
   "icons": [
     {
-      "src": "images/app-icon.jpg",
+      "src": "images/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "images/icon-512.png",
       "sizes": "512x512",
-      "type": "image/jpeg"
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "images/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }
