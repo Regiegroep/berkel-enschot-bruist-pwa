@@ -1195,7 +1195,7 @@ function renderPlattegrond() {
       : "";
 
   return `
-    <section class="screen">
+    <section class="screen map-screen">
       ${screenHeader(
     "Plattegrond",
     "Bekijk waar de verschillende festivalactiviteiten plaatsvinden."
@@ -1210,26 +1210,11 @@ function renderPlattegrond() {
           ? `
               <button
                 type="button"
+                class="festival-map-return"
                 onclick="returnFromMapToPreviousScreen()"
                 aria-label="${safeText(mapReturnLabel)}"
-                style="
-                  display: inline-flex;
-                  align-items: center;
-                  gap: 4px;
-                  min-height: 32px;
-                  padding: 5px 8px;
-                  border: 0;
-                  border-radius: 8px;
-                  background: transparent;
-                  color: #173b69;
-                  font: inherit;
-                  font-size: 13px;
-                  font-weight: 700;
-                  cursor: pointer;
-                  white-space: nowrap;
-                "
               >
-                <span aria-hidden="true" style="font-size: 16px; line-height: 1;">←</span>
+                <span aria-hidden="true">←</span>
                 <span>Terug</span>
               </button>
             `
