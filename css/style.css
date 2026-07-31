@@ -2209,3 +2209,50 @@ main {
   background: #cf3f1c;
   color: #ffffff;
 }
+
+
+/* T-007b: compacte melding wanneer een nieuwe PWA-versie klaarstaat */
+.pwa-update-banner {
+  position: fixed;
+  left: 50%;
+  bottom: calc(var(--nav-hoogte) + 0.65rem);
+  z-index: 40;
+  display: flex;
+  width: min(calc(100% - 1.5rem), 32rem);
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.65rem 0.75rem 0.65rem 0.9rem;
+  transform: translateX(-50%);
+  border: 1px solid rgba(23, 33, 43, 0.14);
+  border-radius: 0.85rem;
+  background: #ffffff;
+  color: #17212b;
+  box-shadow: 0 0.3rem 1rem rgba(23, 33, 43, 0.16);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.pwa-update-banner[hidden] {
+  display: none;
+}
+
+.pwa-update-banner button {
+  flex: 0 0 auto;
+  min-height: 2rem;
+  padding: 0.4rem 0.7rem;
+  border: 0;
+  border-radius: 0.62rem;
+  background: var(--kleur-magenta);
+  color: #ffffff;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 800;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.pwa-update-banner button:disabled {
+  cursor: wait;
+  opacity: 0.72;
+}

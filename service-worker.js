@@ -1,5 +1,5 @@
-/* Berkel-Enschot Bruist PWA — T-007 */
-const CACHE_NAME = "bruist-shell-t007-v1";
+/* Berkel-Enschot Bruist PWA — T-007b */
+const CACHE_NAME = "bruist-shell-t007b-v1";
 const APP_SHELL = [
   "./",
   "./index.html",
