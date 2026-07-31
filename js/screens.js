@@ -1689,6 +1689,7 @@ function programCard(item, context = "programma") {
                   target="_blank"
                   rel="noopener"
                   aria-label="${escapeAttribute(actionText)} voor ${escapeAttribute(item.title)}"
+                  style="color: var(--accent);"
                 >
                   <span
                     class="program-action-icon"
@@ -1737,6 +1738,12 @@ function myBruistCard(item) {
   const colorClass = categoryColorClassFromItem(item);
   const moment = formatProgramTime(item);
   const imageUrl = safeExternalUrl(item.imageUrl);
+  const description =
+    item.shortDescription ||
+    item.description ||
+    "Meer informatie volgt.";
+  const actionUrl = safeExternalUrl(item.actionUrl);
+  const actionText = String(item.actionText || "Aanmelden").trim() || "Aanmelden";
   const hasConflict = hasSavedProgramConflict(item);
 
   return `
@@ -1768,6 +1775,10 @@ function myBruistCard(item) {
       : ""
     }
         </div>
+
+        <p class="program-card-description my-bruist-card-description">
+          ${escapeHtml(description)}
+        </p>
 
         <div class="my-bruist-card-facts">
           <div class="my-bruist-card-fact">
@@ -1815,6 +1826,28 @@ function myBruistCard(item) {
 
             <span>Verwijder</span>
           </button>
+
+          ${actionUrl
+      ? `
+                <a
+                  class="program-card-action program-card-cta"
+                  href="${escapeAttribute(actionUrl)}"
+                  target="_blank"
+                  rel="noopener"
+                  aria-label="${escapeAttribute(actionText)} voor ${escapeAttribute(item.title)}"
+                  style="color: var(--accent);"
+                >
+                  <span
+                    class="program-action-icon"
+                    data-icon="calendar"
+                    aria-hidden="true"
+                  ></span>
+
+                  <span>${escapeHtml(actionText)}</span>
+                </a>
+              `
+      : ""
+    }
 
           ${mapLocation
       ? `
