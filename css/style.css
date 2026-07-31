@@ -727,89 +727,260 @@ main {
 .accent-yellow { --accent: #A67C00; --accent-zacht: rgba(255, 212, 60, 0.30); }
 
 /* =========================================================
-   Berkel-Enschot Bruist v0.9.9 RC2
-   Alleen de navigatie van de plattegrond is compact gemaakt.
-   Alle overige schermstijlen blijven ongewijzigd.
+   Berkel-Enschot Bruist v0.9.9 RC1
+   Visuele afronding en consistente bediening
    ========================================================= */
 
+:root {
+  --ui-control-height: 40px;
+  --ui-control-radius: 10px;
+  --ui-card-radius: var(--radius, 16px);
+  --ui-card-gap: 12px;
+}
+
+/* Algemene ritmiek */
+.screen {
+  padding-top: 18px;
+  padding-bottom: 26px;
+}
+
+.app-header {
+  margin-bottom: 18px;
+}
+
+.screen-subtitle {
+  max-width: 42rem;
+}
+
+/* Consistente interactieve elementen */
+.primary-button,
+.secondary-button,
+.festival-info-button,
+.filter-toggle-button,
+.reset-filters-button,
+.program-search input,
+.filter-field select {
+  border-radius: var(--ui-control-radius);
+}
+
+.primary-button,
+.secondary-button {
+  min-height: 44px;
+  padding: 10px 15px;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 3px solid rgba(193, 27, 93, 0.28);
+  outline-offset: 2px;
+}
+
+/* Programma: compacte en consistente werkbalk */
+.program-toolbar {
+  margin-bottom: 14px;
+}
+
+.program-toolbar-row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 10px;
+  align-items: center;
+}
+
+.filter-toggle-button {
+  min-height: var(--ui-control-height);
+  padding: 8px 13px;
+  background: rgba(255,255,255,.88);
+  border: 1px solid var(--kleur-lijn);
+  color: var(--kleur-donkergrijs);
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.program-search input {
+  width: 100%;
+  min-height: var(--ui-control-height);
+  padding: 8px 12px;
+  background: rgba(255,255,255,.9);
+  border: 1px solid var(--kleur-lijn);
+  color: var(--kleur-tekst);
+}
+
+.program-filter-panel {
+  margin-top: 10px;
+  padding: 13px;
+  background: rgba(255,255,255,.78);
+  border: 1px solid var(--kleur-lijn);
+  border-radius: var(--ui-card-radius);
+}
+
+.program-filter-panel .program-filters {
+  margin-bottom: 10px;
+}
+
+.program-reset-button {
+  min-height: 34px;
+  padding: 5px 2px;
+}
+
+/* Kaarten en detailpagina */
+.program-card {
+  padding-top: 18px;
+  padding-bottom: 18px;
+}
+
+.program-card-title {
+  line-height: 1.18;
+}
+
+.program-card-location,
+.program-card-labels {
+  margin-bottom: 10px;
+}
+
+.detail-card,
+.info-card,
+.map-card,
+.empty-state {
+  border-radius: var(--ui-card-radius);
+}
+
+.detail-card {
+  padding: 22px;
+}
+
+.detail-actions {
+  gap: 9px;
+  margin-top: 22px;
+}
+
+.back-button {
+  min-height: 34px;
+  margin-bottom: 12px;
+  padding: 5px 0;
+}
+
+/* Plattegrond: één compacte regel zonder extra scheiding */
 .map-screen .app-header {
   margin-bottom: 12px;
 }
 
-.map-screen .festival-map-switcher {
+.festival-map-switcher {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
   width: 100%;
-  margin: 0 0 8px;
+  margin: 0 0 10px;
   padding: 0;
   overflow-x: auto;
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
 }
 
-.map-screen .festival-map-switcher::-webkit-scrollbar {
+.festival-map-switcher::-webkit-scrollbar {
   display: none;
 }
 
-.map-screen .festival-map-return,
-.map-screen .festival-map-switch {
+.festival-map-return,
+.festival-map-switch {
   flex: 0 0 auto;
-  min-height: 29px;
-  padding: 4px 8px;
-  border-radius: 7px;
+  min-height: 30px;
+  padding: 5px 9px;
+  border: 1px solid transparent;
+  border-radius: 8px;
   font-size: 13px;
+  font-weight: 750;
   line-height: 1.1;
   white-space: nowrap;
   cursor: pointer;
 }
 
-.map-screen .festival-map-return {
+.festival-map-return {
   display: inline-flex;
   align-items: center;
-  gap: 3px;
-  padding-left: 1px;
-  padding-right: 6px;
-  border: 0;
+  gap: 4px;
+  padding-left: 2px;
+  padding-right: 7px;
   background: transparent;
   color: #173b69;
-  font: inherit;
-  font-size: 13px;
-  font-weight: 700;
 }
 
-.map-screen .festival-map-return > span:first-child {
-  font-size: 15px;
+.festival-map-return > span:first-child {
+  font-size: 16px;
   line-height: 1;
 }
 
-.map-screen .festival-map-switch {
-  border: 1px solid var(--kleur-lijn);
-  background: rgba(255,255,255,.82);
-  color: var(--kleur-donkergrijs);
-  font-weight: 700;
+.festival-map-return:hover,
+.festival-map-return:focus-visible {
+  background: rgba(23,59,105,.08);
 }
 
-.map-screen .festival-map-switch.is-active {
+.festival-map-switch {
+  background: rgba(255,255,255,.82);
+  border-color: var(--kleur-lijn);
+  color: var(--kleur-donkergrijs);
+}
+
+.festival-map-switch:hover,
+.festival-map-switch:focus-visible {
+  background: #fff;
+  border-color: rgba(23,59,105,.24);
+}
+
+.festival-map-switch.is-active {
   background: #173b69;
   border-color: #173b69;
   color: #fff;
 }
 
+.festival-map-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 0 0 8px;
+}
+
+.festival-map-heading h2 {
+  font-size: 18px;
+  line-height: 1.2;
+  letter-spacing: -.015em;
+}
+
+.festival-map-count {
+  flex: 0 0 auto;
+  color: var(--kleur-subtekst);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.festival-map-image {
+  border-radius: var(--ui-card-radius);
+  border: 1px solid var(--kleur-lijn);
+  box-shadow: var(--schaduw-zacht);
+}
+
+/* Klein scherm: behoud één regel; zo nodig horizontaal schuiven */
 @media (max-width: 390px) {
-  .map-screen .festival-map-switcher {
+  .festival-map-switcher {
     gap: 4px;
   }
 
-  .map-screen .festival-map-return,
-  .map-screen .festival-map-switch {
-    min-height: 28px;
-    padding: 4px 6px;
+  .festival-map-return,
+  .festival-map-switch {
+    min-height: 29px;
+    padding: 5px 7px;
     font-size: 12px;
   }
 
-  .map-screen .festival-map-return {
-    padding-left: 0;
-    padding-right: 4px;
+  .festival-map-return {
+    padding-left: 1px;
+    padding-right: 5px;
+  }
+
+  .program-toolbar-row {
+    gap: 8px;
   }
 }
