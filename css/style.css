@@ -44,8 +44,15 @@ main {
 }
 
 @keyframes screenIn {
-  from { opacity: 0; transform: translateY(4px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* HOME */
@@ -135,11 +142,30 @@ main {
   background: var(--accent);
 }
 
-.accent-blue { --accent: var(--kleur-blauw); --accent-zacht: rgba(53, 96, 169, 0.12); }
-.accent-purple { --accent: var(--kleur-paars); --accent-zacht: rgba(104, 49, 134, 0.12); }
-.accent-magenta { --accent: var(--kleur-magenta); --accent-zacht: rgba(193, 27, 93, 0.12); }
-.accent-orange { --accent: var(--kleur-oranje); --accent-zacht: rgba(232, 78, 34, 0.12); }
-.accent-grey { --accent: var(--kleur-donkergrijs); --accent-zacht: rgba(114, 114, 113, 0.12); }
+.accent-blue {
+  --accent: var(--kleur-blauw);
+  --accent-zacht: rgba(53, 96, 169, 0.12);
+}
+
+.accent-purple {
+  --accent: var(--kleur-paars);
+  --accent-zacht: rgba(104, 49, 134, 0.12);
+}
+
+.accent-magenta {
+  --accent: var(--kleur-magenta);
+  --accent-zacht: rgba(193, 27, 93, 0.12);
+}
+
+.accent-orange {
+  --accent: var(--kleur-oranje);
+  --accent-zacht: rgba(232, 78, 34, 0.12);
+}
+
+.accent-grey {
+  --accent: var(--kleur-donkergrijs);
+  --accent-zacht: rgba(114, 114, 113, 0.12);
+}
 
 .menu-title {
   display: block;
@@ -518,6 +544,7 @@ main {
 }
 
 @media (min-width: 720px) {
+
   .card-grid,
   .map-options {
     grid-template-columns: repeat(2, 1fr);
@@ -538,8 +565,17 @@ main {
 }
 
 @keyframes loadingPulse {
-  0%, 100% { transform: scale(1); opacity: 0.72; }
-  50% { transform: scale(1.06); opacity: 1; }
+
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.72;
+  }
+
+  50% {
+    transform: scale(1.06);
+    opacity: 1;
+  }
 }
 
 .error-state {
@@ -636,7 +672,7 @@ main {
   line-height: 1.65;
 }
 
-.detail-description p + p {
+.detail-description p+p {
   margin-top: 12px;
 }
 
@@ -724,7 +760,10 @@ main {
   }
 }
 
-.accent-yellow { --accent: #A67C00; --accent-zacht: rgba(255, 212, 60, 0.30); }
+.accent-yellow {
+  --accent: #A67C00;
+  --accent-zacht: rgba(255, 212, 60, 0.30);
+}
 
 /* =========================================================
    Berkel-Enschot Bruist v0.9.9 RC2
@@ -778,14 +817,14 @@ main {
   font-weight: 700;
 }
 
-.map-screen .festival-map-return > span:first-child {
+.map-screen .festival-map-return>span:first-child {
   font-size: 15px;
   line-height: 1;
 }
 
 .map-screen .festival-map-switch {
   border: 1px solid var(--kleur-lijn);
-  background: rgba(255,255,255,.82);
+  background: rgba(255, 255, 255, .82);
   color: var(--kleur-donkergrijs);
   font-weight: 700;
 }
