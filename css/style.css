@@ -1896,12 +1896,12 @@ main {
 .festival-map-switcher {
   display: flex;
   align-items: center;
-  gap: 0.3rem;
-  margin: 0.65rem 0 0.8rem;
-  padding: 0.2rem;
+  gap: 0.22rem;
+  margin: 0.45rem 0 0.55rem;
+  padding: 0;
   overflow-x: auto;
-  background: #f1f1f1;
-  border-radius: 0.7rem;
+  background: transparent;
+  border-radius: 0;
   scrollbar-width: none;
 }
 
@@ -1913,15 +1913,15 @@ main {
   display: inline-flex;
   flex: 0 0 auto;
   align-items: center;
-  gap: 0.2rem;
-  min-height: 30px;
-  padding: 0.25rem 0.35rem;
+  gap: 0.15rem;
+  min-height: 24px;
+  padding: 0 0.18rem 0 0;
   border: 0;
-  border-radius: 0.45rem;
+  border-radius: 0;
   background: transparent;
   color: #173b69;
   font: inherit;
-  font-size: 0.8rem;
+  font-size: 0.72rem;
   font-weight: 600;
   cursor: pointer;
   white-space: nowrap;
@@ -1930,22 +1930,24 @@ main {
 .festival-map-switch {
   flex: 1 0 auto;
   min-width: 0;
-  min-height: 30px;
-  padding: 0.3rem 0.5rem;
-  border: 0;
-  border-radius: 0.55rem;
-  background: transparent;
+  min-height: 26px;
+  padding: 0.18rem 0.4rem;
+  border: 1px solid rgba(23, 33, 43, 0.14);
+  border-radius: 0.45rem;
+  background: #ffffff;
   color: inherit;
   font: inherit;
-  font-size: 0.78rem;
+  font-size: 0.72rem;
   font-weight: 700;
   cursor: pointer;
   white-space: nowrap;
 }
 
 .festival-map-switch.is-active {
-  background: #ffffff;
-  box-shadow: 0 0.1rem 0.45rem rgba(0, 0, 0, 0.12);
+  background: #173b69;
+  color: #ffffff;
+  border-color: #173b69;
+  box-shadow: none;
 }
 
 .festival-map-heading {
