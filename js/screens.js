@@ -1214,7 +1214,7 @@ function renderPlattegrond() {
                 onclick="returnFromMapToPreviousScreen()"
                 aria-label="${safeText(mapReturnLabel)}"
               >
-                <span aria-hidden="true" style="font-size: 16px; line-height: 1;">←</span>
+                <span aria-hidden="true" class="festival-map-back-icon">◀</span>
                 <span>Terug</span>
               </button>
             `

@@ -1896,8 +1896,9 @@ main {
 .festival-map-switcher {
   display: flex;
   align-items: center;
-  gap: 0.22rem;
-  margin: 0.45rem 0 0.55rem;
+  flex-wrap: nowrap;
+  gap: 0.28rem;
+  margin: 0.45rem 0 0.65rem;
   padding: 0;
   overflow-x: auto;
   background: transparent;
@@ -1909,44 +1910,62 @@ main {
   display: none;
 }
 
-.festival-map-back {
+.festival-map-switcher .festival-map-back {
+  display: inline-flex !important;
+  flex: 0 0 auto !important;
+  align-items: center !important;
+  gap: 0.22rem !important;
+  min-width: 0 !important;
+  min-height: 24px !important;
+  height: 24px !important;
+  margin: 0 !important;
+  padding: 0 0.2rem 0 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: #17212b !important;
+  font-family: inherit !important;
+  font-size: 0.78rem !important;
+  font-weight: 500 !important;
+  line-height: 1 !important;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.festival-map-back-icon {
+  display: inline-block;
+  font-size: 0.72rem;
+  line-height: 1;
+  transform: translateY(-0.02rem);
+}
+
+.festival-map-switcher .festival-map-switch {
   display: inline-flex;
   flex: 0 0 auto;
   align-items: center;
-  gap: 0.15rem;
-  min-height: 24px;
-  padding: 0 0.18rem 0 0;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
-  color: #173b69;
-  font: inherit;
-  font-size: 0.72rem;
-  font-weight: 600;
-  cursor: pointer;
-  white-space: nowrap;
-}
-
-.festival-map-switch {
-  flex: 1 0 auto;
+  justify-content: center;
   min-width: 0;
-  min-height: 26px;
-  padding: 0.18rem 0.4rem;
-  border: 1px solid rgba(23, 33, 43, 0.14);
-  border-radius: 0.45rem;
+  min-height: 28px;
+  height: 28px;
+  margin: 0;
+  padding: 0.2rem 0.48rem;
+  border: 1px solid rgba(23, 33, 43, 0.16);
+  border-radius: 0.5rem;
   background: #ffffff;
   color: inherit;
   font: inherit;
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   font-weight: 700;
+  line-height: 1;
   cursor: pointer;
   white-space: nowrap;
 }
 
-.festival-map-switch.is-active {
+.festival-map-switcher .festival-map-switch.is-active {
+  border-color: #173b69;
   background: #173b69;
   color: #ffffff;
-  border-color: #173b69;
   box-shadow: none;
 }
 
