@@ -1685,12 +1685,11 @@ function programCard(item, context = "programma") {
       ? `
                 <a
                   class="program-card-action program-card-cta"
-                  style="color: #ffffff !important;"
+                  style="background: var(--accent); color: #ffffff; border-radius: 10px; padding: 7px 10px; text-decoration: none;"
                   href="${escapeAttribute(actionUrl)}"
                   target="_blank"
                   rel="noopener"
                   aria-label="${escapeAttribute(actionText)} voor ${escapeAttribute(item.title)}"
-                  style="color: var(--accent);"
                 >
                   <span
                     class="program-action-icon"
@@ -1832,12 +1831,11 @@ function myBruistCard(item) {
       ? `
                 <a
                   class="program-card-action program-card-cta"
-                  style="color: #ffffff !important;"
+                  style="background: var(--accent); color: #ffffff; border-radius: 10px; padding: 7px 10px; text-decoration: none;"
                   href="${escapeAttribute(actionUrl)}"
                   target="_blank"
                   rel="noopener"
                   aria-label="${escapeAttribute(actionText)} voor ${escapeAttribute(item.title)}"
-                  style="color: var(--accent);"
                 >
                   <span
                     class="program-action-icon"
