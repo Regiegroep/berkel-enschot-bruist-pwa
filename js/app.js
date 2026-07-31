@@ -6,6 +6,7 @@ const appState = {
   savedProgramIds: loadSavedProgramIds(),
   selectedPlattegrondLocationId: null,
   selectedProgramFromMapId: null,
+  mapReturnScreen: null,
 
   filters: {
     day: "",
@@ -112,6 +113,7 @@ function navigateTo(screenName, options = {}) {
   ) {
     appState.selectedPlattegrondLocationId = null;
     appState.selectedProgramFromMapId = null;
+    appState.mapReturnScreen = null;
   }
 
   appState.currentScreen = screenName;
@@ -294,6 +296,7 @@ function selectPlattegrondLocation(locationId) {
   const id = String(locationId || "");
 
   appState.selectedProgramFromMapId = null;
+  appState.mapReturnScreen = null;
 
   appState.selectedPlattegrondLocationId =
     appState.selectedPlattegrondLocationId === id
@@ -354,8 +357,18 @@ function showLocationOnMap(locationValue, programId = "") {
     location.kaart ??
     "";
 
+  const sourceScreen =
+    appState.currentScreen === "mijn"
+      ? "mijn"
+      : "programma";
+
   appState.selectedPlattegrondLocationId = selectedId;
   appState.selectedProgramFromMapId = String(programId || "").trim() || null;
+  appState.mapReturnScreen =
+    appState.selectedProgramFromMapId
+      ? sourceScreen
+      : null;
+
   activePlattegrondMap =
     normalizePlattegrondMap(mapValue);
 
@@ -376,18 +389,26 @@ function showLocationOnMap(locationValue, programId = "") {
 
 function showProgramCardFromMap(programId) {
   const id = String(programId || "").trim();
+  const returnScreen =
+    appState.mapReturnScreen === "mijn"
+      ? "mijn"
+      : "programma";
 
   appState.selectedProgramFromMapId = null;
-  appState.searchQuery = "";
-  appState.filters = {
-    day: "",
-    category: "",
-    part: "",
-    location: "",
-    tag: ""
-  };
+  appState.mapReturnScreen = null;
 
-  navigateTo("programma");
+  if (returnScreen === "programma") {
+    appState.searchQuery = "";
+    appState.filters = {
+      day: "",
+      category: "",
+      part: "",
+      location: "",
+      tag: ""
+    };
+  }
+
+  navigateTo(returnScreen);
 
   window.setTimeout(() => {
     const card = Array.from(
@@ -403,6 +424,22 @@ function showProgramCardFromMap(programId) {
       });
     }
   }, 150);
+}
+
+function returnFromMapToPreviousScreen() {
+  const programId =
+    String(appState.selectedProgramFromMapId || "").trim();
+
+  if (programId) {
+    showProgramCardFromMap(programId);
+    return;
+  }
+
+  navigateTo(
+    appState.mapReturnScreen === "mijn"
+      ? "mijn"
+      : "programma"
+  );
 }
 
 function showProgramAtLocation(locationName) {
@@ -423,3 +460,4 @@ window.selectPlattegrondLocation = selectPlattegrondLocation;
 window.showLocationOnMap = showLocationOnMap;
 window.showProgramAtLocation = showProgramAtLocation;
 window.showProgramCardFromMap = showProgramCardFromMap;
+window.returnFromMapToPreviousScreen = returnFromMapToPreviousScreen;

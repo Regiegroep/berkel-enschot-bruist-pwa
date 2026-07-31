@@ -873,6 +873,12 @@ function renderPlattegrond() {
       ) || null
       : null;
 
+  const isFocusedProgramMap = Boolean(selectedProgramFromMap);
+  const mapReturnLabel =
+    appState.mapReturnScreen === "mijn"
+      ? "Terug naar Mijn Bruist"
+      : "Terug naar programma";
+
   const buttonsHtml = Object.entries(maps)
     .map(([mapId, map]) => {
       const active =
@@ -903,10 +909,14 @@ function renderPlattegrond() {
       const markerIcon =
         String(location.icon || "").trim() || "●";
 
+      const isDisabled =
+        isFocusedProgramMap && !isSelected;
+
       return `
       <button
         type="button"
         class="festival-map-marker"
+        ${isDisabled ? "disabled" : ""}
         onclick="selectPlattegrondLocation(
           '${safeText(location.id)}'
         )"
@@ -925,8 +935,7 @@ function renderPlattegrond() {
           padding: 0;
           border: ${isSelected ? "4px" : "2px"} solid #ffffff;
           border-radius: 50%;
-          background: ${isSelected ? "#173b69" : "#d93636"
-        };
+          background: ${isSelected ? "#173b69" : "#d93636"};
           color: #ffffff;
           opacity: ${selectedLocation && !isSelected ? 0.42 : 1};
           box-shadow: ${isSelected
@@ -935,7 +944,8 @@ function renderPlattegrond() {
           transform: translate(-50%, -50%);
           font-size: ${isSelected ? 16 : 10}px;
           line-height: 1;
-          cursor: pointer;
+          cursor: ${isDisabled ? "default" : "pointer"};
+          pointer-events: ${isDisabled ? "none" : "auto"};
           transition: opacity 160ms ease, transform 160ms ease, box-shadow 160ms ease;
         "
       >
@@ -1008,11 +1018,15 @@ function renderPlattegrond() {
             style="
               display: grid;
               gap: 8px;
+              max-height: 320px;
               margin-top: 14px;
+              padding-right: 4px;
+              overflow-y: auto;
+              overscroll-behavior: contain;
             "
           >
             ${selectedLocationProgramma
-          .slice(0, 4)
+          .sort(compareProgramItems)
           .map((item) => {
             const timeParts = [
               item.day,
@@ -1020,11 +1034,23 @@ function renderPlattegrond() {
             ].filter(Boolean);
 
             return `
-                  <div
+                  <button
+                    type="button"
+                    onclick="showProgramCardFromMap(
+                      '${escapeJsString(item.id)}'
+                    )"
+                    aria-label="Bekijk ${safeText(item.title)} in het programma"
                     style="
+                      display: block;
+                      width: 100%;
                       padding: 10px 12px;
+                      border: 0;
                       border-radius: 10px;
                       background: #f5f3ed;
+                      color: #17212b;
+                      text-align: left;
+                      font: inherit;
+                      cursor: pointer;
                     "
                   >
                     <strong
@@ -1051,26 +1077,10 @@ function renderPlattegrond() {
                         `
                 : ""
               }
-                  </div>
+                  </button>
                 `;
           })
           .join("")}
-
-            ${selectedLocationProgramma.length > 4
-          ? `
-                  <p
-                    style="
-                      margin: 2px 0 0;
-                      color: #65605a;
-                      font-size: 13px;
-                    "
-                  >
-                    En nog ${selectedLocationProgramma.length - 4
-          } andere activiteiten.
-                  </p>
-                `
-          : ""
-        }
           </div>
         `
         : `
@@ -1190,6 +1200,20 @@ function renderPlattegrond() {
     "Plattegrond",
     "Bekijk waar de verschillende festivalactiviteiten plaatsvinden."
   )}
+
+      ${isFocusedProgramMap
+      ? `
+          <button
+            type="button"
+            class="back-button"
+            onclick="returnFromMapToPreviousScreen()"
+          >
+            <span aria-hidden="true">←</span>
+            <span>${safeText(mapReturnLabel)}</span>
+          </button>
+        `
+      : ""
+    }
 
       <div
         class="festival-map-switcher"
@@ -1649,7 +1673,10 @@ function myBruistCard(item) {
   const hasConflict = hasSavedProgramConflict(item);
 
   return `
-    <article class="my-bruist-card ${colorClass}">
+    <article
+      class="my-bruist-card ${colorClass}"
+      data-program-id="${escapeAttribute(item.id)}"
+    >
       <span
         class="my-bruist-card-accent"
         aria-hidden="true"
