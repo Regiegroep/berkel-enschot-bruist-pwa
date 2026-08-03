@@ -2277,7 +2277,7 @@ main {
   grid-column: 1 / -1;
 }
 
-.filter-field > span {
+.filter-field>span {
   font-size: 11px;
   white-space: nowrap;
 }
@@ -2346,7 +2346,7 @@ main {
     min-height: 40px;
   }
 
-  .filter-field > span {
+  .filter-field>span {
     font-size: 13px;
     font-weight: 700;
     white-space: nowrap;
