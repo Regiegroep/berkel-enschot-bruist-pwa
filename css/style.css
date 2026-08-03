@@ -2315,3 +2315,65 @@ main {
     align-items: center;
   }
 }
+
+/* Programmafilters — drie regels met resetactie rechts */
+@media (max-width: 719px) {
+  .program-filter-panel {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 88px;
+    column-gap: 12px;
+    align-items: center;
+    padding: 10px 12px;
+  }
+
+  .program-filter-panel[hidden] {
+    display: none;
+  }
+
+  .program-filters {
+    grid-column: 1;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 6px;
+    margin: 0;
+  }
+
+  .filter-field {
+    display: grid;
+    grid-template-columns: 82px minmax(0, 1fr);
+    align-items: center;
+    gap: 8px;
+    min-height: 40px;
+  }
+
+  .filter-field > span {
+    font-size: 13px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .filter-field select {
+    width: 100%;
+    min-height: 40px;
+    padding: 7px 34px 7px 11px;
+    font-size: 14px;
+  }
+
+  .program-reset-button {
+    grid-column: 2;
+    align-self: center;
+    justify-self: stretch;
+    min-height: 0;
+    margin: 0;
+    padding: 8px 4px;
+    border: 0;
+    border-radius: 9px;
+    background: rgba(208, 23, 94, 0.06);
+    color: var(--kleur-magenta);
+    font-size: 13px;
+    font-weight: 800;
+    line-height: 1.2;
+    text-align: center;
+    white-space: normal;
+  }
+}
