@@ -1,1 +1,1 @@
-BEB-PWA v0.6 / R06.00 - Relationele gegevenslaag
+BEB-PWA v1.0 / R10.00 - Functioneel afgeronde basisversie
