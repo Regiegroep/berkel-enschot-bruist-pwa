@@ -2397,3 +2397,40 @@ main {
     grid-template-columns: 78px minmax(0, 1fr);
   }
 }
+
+/* Festivalinfo detail — tussenkoppen en leesbare tekst */
+.festival-info-detail-text {
+  font-weight: 400;
+}
+
+.festival-info-detail-text p {
+  margin: 0 0 14px;
+  color: var(--kleur-subtekst);
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.6;
+}
+
+.festival-info-detail-text p:last-child {
+  margin-bottom: 0;
+}
+
+.festival-info-subheading {
+  margin: 18px 0 5px;
+  color: var(--kleur-donkergrijs);
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 1.25;
+  letter-spacing: 0;
+}
+
+.festival-info-subheading:first-child {
+  margin-top: 0;
+}
+
+.festival-info-email {
+  color: var(--kleur-magenta);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}

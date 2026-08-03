@@ -1376,7 +1376,9 @@ function showFestivalInfoDetail(infoId) {
     return;
   }
 
-  const imageUrl = safeExternalUrl(item.imageUrl);
+  const imageUrl = safeExternalUrl(
+    item.imageUrl || store.festivalinfo?.[0]?.imageUrl
+  );
 
   document.getElementById("app").innerHTML = `
     <section class="screen festival-info-detail-screen">
@@ -1405,7 +1407,7 @@ function showFestivalInfoDetail(infoId) {
       </div>
 
       <div class="festival-info-detail-text">
-        ${formatDescription(item.text)}
+        ${formatFestivalInfoText(item.text)}
       </div>
     </section>
   `;
@@ -1938,6 +1940,82 @@ function safeExternalUrl(value) {
   }
 
   return "";
+}
+
+
+function formatFestivalInfoText(value) {
+  const text = String(value ?? "")
+    .replace(/\r\n?/g, "\n")
+    .trim();
+
+  if (!text) {
+    return "";
+  }
+
+  const lines = text.split("\n");
+  const parts = [];
+  let paragraphLines = [];
+
+  const flushParagraph = () => {
+    const paragraph = paragraphLines
+      .map((line) => line.trim())
+      .filter(Boolean)
+      .join(" ");
+
+    if (paragraph) {
+      parts.push(`<p>${linkifyEmailAddresses(paragraph)}</p>`);
+    }
+
+    paragraphLines = [];
+  };
+
+  for (const rawLine of lines) {
+    const line = rawLine.trim();
+
+    if (!line) {
+      flushParagraph();
+      continue;
+    }
+
+    if (line.startsWith("## ")) {
+      flushParagraph();
+
+      const heading = line.slice(3).trim();
+
+      if (heading) {
+        parts.push(
+          `<h2 class="festival-info-subheading">${escapeHtml(heading)}</h2>`
+        );
+      }
+
+      continue;
+    }
+
+    paragraphLines.push(line);
+  }
+
+  flushParagraph();
+
+  return parts.join("");
+}
+
+function linkifyEmailAddresses(value) {
+  const text = String(value ?? "");
+  const emailPattern =
+    /([A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,})/gi;
+
+  let result = "";
+  let lastIndex = 0;
+
+  text.replace(emailPattern, (match, email, offset) => {
+    result += escapeHtml(text.slice(lastIndex, offset));
+    result += `<a class="festival-info-email" href="mailto:${escapeAttribute(email)}">${escapeHtml(email)}</a>`;
+    lastIndex = offset + match.length;
+    return match;
+  });
+
+  result += escapeHtml(text.slice(lastIndex));
+  return result;
 }
 
 function formatDescription(value) {
