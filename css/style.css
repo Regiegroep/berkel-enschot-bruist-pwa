@@ -2257,198 +2257,143 @@ main {
   opacity: 0.72;
 }
 
+/* Programmafilters — definitieve compacte variant */
+.program-toolbar-row {
+  display: grid;
+  grid-template-columns: minmax(96px, auto) minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+}
 
-/* T-009: festival 2026 — compacte zichtbare filters */
+.program-toolbar-row .filter-toggle-button {
+  width: auto;
+  min-height: 40px;
+  height: 40px;
+  padding: 7px 11px;
+}
+
+.program-toolbar-row .program-search,
+.program-toolbar-row .program-search input {
+  width: 100%;
+  min-width: 0;
+}
+
+.program-toolbar-row .program-search input {
+  min-height: 40px;
+  height: 40px;
+  padding: 7px 12px;
+}
+
+.program-reset-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  width: auto;
+  min-height: 40px;
+  height: 40px;
+  margin: 0;
+  padding: 0 4px;
+  border: 0;
+  background: transparent;
+  color: var(--kleur-magenta);
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.program-reset-button[hidden] {
+  display: none;
+}
+
+.program-filter-panel {
+  margin-top: 7px;
+  padding: 8px 10px;
+  border: 1px solid var(--kleur-lijn);
+  border-radius: 13px;
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow: none;
+}
+
+.program-filter-panel[hidden] {
+  display: none;
+}
+
 .program-filters {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 7px 10px;
+  grid-template-columns: 1fr;
+  gap: 5px;
+  margin: 0;
 }
 
 .filter-field {
   display: grid;
-  grid-template-columns: 72px minmax(0, 1fr);
+  grid-template-columns: 86px minmax(0, 1fr);
   align-items: center;
   gap: 7px;
-  min-height: 36px;
+  min-width: 0;
+  min-height: 34px;
+  margin: 0;
 }
 
-.filter-field:nth-child(3) {
-  grid-column: 1 / -1;
-}
-
-.filter-field > span {
-  font-size: 11px;
+.filter-field>span {
+  color: var(--kleur-subtekst);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.15;
   white-space: nowrap;
 }
 
 .filter-field select {
+  width: 100%;
+  min-width: 0;
   min-height: 34px;
-  padding-top: 5px;
-  padding-bottom: 5px;
-}
-
-.program-filter-panel {
-  padding: 8px 10px;
+  height: 34px;
+  margin: 0;
+  padding: 3px 30px 3px 9px;
+  border: 1px solid var(--kleur-lijn);
+  border-radius: 9px;
+  background: var(--kleur-wit);
+  color: var(--kleur-tekst);
+  box-shadow: none;
+  font-size: 13px;
+  line-height: 1.1;
 }
 
 @media (max-width: 380px) {
-  .program-filters {
-    grid-template-columns: 1fr;
-    gap: 5px;
+  .program-toolbar-row {
+    grid-template-columns: 92px minmax(0, 1fr) auto;
+    gap: 6px;
   }
 
-  .filter-field:nth-child(3) {
-    grid-column: auto;
+  .program-toolbar-row .filter-toggle-button,
+  .program-toolbar-row .program-search input,
+  .program-reset-button {
+    min-height: 38px;
+    height: 38px;
+  }
+
+  .filter-field {
+    grid-template-columns: 78px minmax(0, 1fr);
+    gap: 6px;
+  }
+
+  .filter-field select {
+    min-height: 32px;
+    height: 32px;
+    font-size: 12px;
   }
 }
 
 @media (min-width: 720px) {
   .program-filters {
     grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
-  .filter-field,
-  .filter-field:nth-child(3) {
-    grid-column: auto;
-    grid-template-columns: 72px minmax(0, 1fr);
-    align-items: center;
-  }
-}
-
-/* Programmafilters — drie regels met resetactie rechts */
-@media (max-width: 719px) {
-  .program-filter-panel {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) 88px;
-    column-gap: 12px;
-    align-items: center;
-    padding: 10px 12px;
-  }
-
-  .program-filter-panel[hidden] {
-    display: none;
-  }
-
-  .program-filters {
-    grid-column: 1;
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 6px;
-    margin: 0;
+    gap: 10px;
   }
 
   .filter-field {
-    display: grid;
-    grid-template-columns: 82px minmax(0, 1fr);
-    align-items: center;
-    gap: 8px;
-    min-height: 40px;
-  }
-
-  .filter-field > span {
-    font-size: 13px;
-    font-weight: 700;
-    white-space: nowrap;
-  }
-
-  .filter-field select {
-    width: 100%;
-    min-height: 40px;
-    padding: 7px 34px 7px 11px;
-    font-size: 14px;
-  }
-
-  .program-reset-button {
-    grid-column: 2;
-    align-self: center;
-    justify-self: stretch;
-    min-height: 0;
-    margin: 0;
-    padding: 8px 4px;
-    border: 0;
-    border-radius: 9px;
-    background: rgba(208, 23, 94, 0.06);
-    color: var(--kleur-magenta);
-    font-size: 13px;
-    font-weight: 800;
-    line-height: 1.2;
-    text-align: center;
-    white-space: normal;
-  }
-}
-
-
-/* Programmafilters: compact, drie regels */
-#program-filters {
-  padding: 9px 12px;
-}
-
-#program-filters .filter-grid,
-#program-filters .program-filter-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 6px;
-}
-
-#program-filters label,
-#program-filters .filter-field {
-  display: grid;
-  grid-template-columns: 96px minmax(0, 1fr);
-  align-items: center;
-  gap: 8px;
-  margin: 0;
-}
-
-#program-filters label > span,
-#program-filters .filter-label {
-  margin: 0;
-  line-height: 1.1;
-}
-
-#program-filters select {
-  height: 36px;
-  min-height: 36px;
-  margin: 0;
-  padding-top: 3px;
-  padding-bottom: 3px;
-}
-
-#reset-filters {
-  width: auto;
-  min-width: auto;
-  height: 36px;
-  min-height: 36px;
-  padding: 0 6px;
-  border: 0;
-  background: transparent;
-  box-shadow: none;
-  white-space: nowrap;
-  font-weight: 700;
-}
-
-/* Bovenregel: Filters, zoeken en compacte Wis-knop */
-.program-toolbar,
-.program-search-row,
-.program-controls {
-  align-items: center;
-}
-
-.program-toolbar #search-program,
-.program-search-row #search-program,
-.program-controls #search-program {
-  min-width: 0;
-  flex: 1 1 auto;
-}
-
-@media (max-width: 520px) {
-  #program-filters {
-    padding: 8px 10px;
-  }
-
-  #program-filters label,
-  #program-filters .filter-field {
-    grid-template-columns: 88px minmax(0, 1fr);
-    gap: 7px;
+    grid-template-columns: 78px minmax(0, 1fr);
   }
 }

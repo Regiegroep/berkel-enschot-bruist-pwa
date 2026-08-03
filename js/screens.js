@@ -176,6 +176,15 @@ function renderProgramma() {
               value="${escapeAttribute(appState.searchQuery)}"
             >
           </div>
+
+          <button
+            type="button"
+            class="reset-filters-button program-reset-button"
+            id="reset-filters"
+            ${hasActiveProgramFilters() ? "" : "hidden"}
+          >
+            Wis
+          </button>
         </div>
 
         <div
@@ -184,15 +193,6 @@ function renderProgramma() {
           hidden
         >
           ${renderProgramFilters()}
-
-          <button
-            type="button"
-            class="reset-filters-button program-reset-button"
-            id="reset-filters"
-            ${hasActiveProgramFilters() ? "" : "hidden"}
-          >
-            Wis alle filters
-          </button>
         </div>
       </div>
 
@@ -209,8 +209,8 @@ function renderProgramFilters() {
   return `
     <form class="program-filters" id="program-filters">
       ${filterSelect("part", "Onderdeel", options.parts, appState.filters.part)}
-      ${filterSelect("day", "Dag", options.days, appState.filters.day)}
       ${filterSelect("location", "Locatie", options.locations, appState.filters.location)}
+      ${filterSelect("day", "Dag", options.days, appState.filters.day)}
     </form>
   `;
 }
