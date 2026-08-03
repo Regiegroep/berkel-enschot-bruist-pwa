@@ -1058,8 +1058,8 @@ function renderPlattegrond() {
           <div
             style="
               display: grid;
-              gap: 8px;
-              max-height: 320px;
+              gap: 4px;
+              max-height: 285px;
               margin-top: 14px;
               padding-right: 4px;
               overflow-y: auto;
@@ -1084,7 +1084,7 @@ function renderPlattegrond() {
                     style="
                       display: block;
                       width: 100%;
-                      padding: 10px 12px;
+                      padding: 6px 10px;
                       border: 0;
                       border-radius: 10px;
                       background: #f5f3ed;
@@ -1098,6 +1098,8 @@ function renderPlattegrond() {
                       style="
                         display: block;
                         color: #17212b;
+                        font-size: 14px;
+                        line-height: 1.15;
                       "
                     >
                       ${safeText(item.title)}
@@ -1108,9 +1110,10 @@ function renderPlattegrond() {
                           <span
                             style="
                               display: block;
-                              margin-top: 3px;
+                              margin-top: 2px;
                               color: #65605a;
-                              font-size: 13px;
+                              font-size: 12px;
+                              line-height: 1.15;
                             "
                           >
                             ${safeText(timeParts.join(" · "))}
@@ -1142,8 +1145,8 @@ function renderPlattegrond() {
         <section
           id="selected-map-location"
           style="
-            margin-top: 18px;
-            padding: 18px;
+            margin-top: 14px;
+            padding: 14px;
             border-radius: 18px;
             background: #ffffff;
             box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
@@ -1214,19 +1217,22 @@ function renderPlattegrond() {
                     '${safeText(selectedLocation.name)}'
                   )"
                   style="
-                    width: 100%;
-                    margin-top: 14px;
-                    padding: 12px 16px;
-                    border: 1px solid rgba(23, 33, 43, 0.18);
-                    border-radius: 12px;
-                    background: #ffffff;
-                    color: #17212b;
+                    width: auto;
+                    margin-top: 7px;
+                    padding: 4px 0;
+                    border: 0;
+                    border-radius: 0;
+                    background: transparent;
+                    color: #8b6500;
+                    text-align: left;
                     font: inherit;
-                    font-weight: 650;
+                    font-size: 14px;
+                    font-weight: 700;
+                    line-height: 1.15;
                     cursor: pointer;
                   "
                 >
-                  Bekijk alle activiteiten op deze locatie
+                  Bekijk alle activiteiten op deze locatie ›
                 </button>
               `
         : ""

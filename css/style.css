@@ -2434,3 +2434,21 @@ main {
   text-decoration: underline;
   text-underline-offset: 2px;
 }
+
+/* PLATTEGROND — locatiepaneel iets compacter */
+.festival-map-location-panel {
+  padding-top: 0.9rem;
+  padding-bottom: 0.9rem;
+}
+
+.festival-map-location-panel .festival-map-location-item {
+  padding-top: 0.65rem;
+  padding-bottom: 0.65rem;
+}
+
+.festival-map-location-panel .festival-map-location-action,
+.festival-map-location-panel .secondary-button {
+  min-height: 42px;
+  padding-top: 9px;
+  padding-bottom: 9px;
+}
