@@ -209,10 +209,8 @@ function renderProgramFilters() {
   return `
     <form class="program-filters" id="program-filters">
       ${filterSelect("day", "Dag", options.days, appState.filters.day)}
-      ${filterSelect("category", "Categorie", options.categories, appState.filters.category)}
-      ${filterSelect("part", "Festivalonderdeel", options.parts, appState.filters.part)}
+      ${filterSelect("part", "Onderdeel", options.parts, appState.filters.part)}
       ${filterSelect("location", "Locatie", options.locations, appState.filters.location)}
-      ${filterSelect("tag", "Tag", options.tags, appState.filters.tag)}
     </form>
   `;
 }
