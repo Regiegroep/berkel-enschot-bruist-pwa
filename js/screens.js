@@ -1001,7 +1001,7 @@ function renderPlattegrond() {
       ? (() => {
         const timeParts = [
           selectedProgramFromMap.day,
-          selectedProgramFromMap.startTime
+          formatClockTime(selectedProgramFromMap.startTime)
         ].filter(Boolean);
 
         return `
@@ -1071,7 +1071,7 @@ function renderPlattegrond() {
           .map((item) => {
             const timeParts = [
               item.day,
-              item.startTime
+              formatClockTime(item.startTime)
             ].filter(Boolean);
 
             return `
@@ -1912,7 +1912,7 @@ function formatClockTime(value) {
   const match = text.match(/^(\d{1,2}):(\d{2})/);
 
   if (!match) {
-    return text;
+    return "";
   }
 
   return `${match[1].padStart(2, "0")}:${match[2]}`;
