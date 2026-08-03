@@ -2267,7 +2267,7 @@ main {
 
 .filter-field {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-columns: 72px minmax(0, 1fr);
   align-items: center;
   gap: 7px;
   min-height: 36px;
@@ -2277,7 +2277,7 @@ main {
   grid-column: 1 / -1;
 }
 
-.filter-field>span {
+.filter-field > span {
   font-size: 11px;
   white-space: nowrap;
 }
@@ -2311,7 +2311,7 @@ main {
   .filter-field,
   .filter-field:nth-child(3) {
     grid-column: auto;
-    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-columns: 72px minmax(0, 1fr);
     align-items: center;
   }
 }
