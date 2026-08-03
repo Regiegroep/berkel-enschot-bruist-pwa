@@ -2277,7 +2277,7 @@ main {
   grid-column: 1 / -1;
 }
 
-.filter-field>span {
+.filter-field > span {
   font-size: 11px;
   white-space: nowrap;
 }
@@ -2346,7 +2346,7 @@ main {
     min-height: 40px;
   }
 
-  .filter-field>span {
+  .filter-field > span {
     font-size: 13px;
     font-weight: 700;
     white-space: nowrap;
@@ -2375,5 +2375,80 @@ main {
     line-height: 1.2;
     text-align: center;
     white-space: normal;
+  }
+}
+
+
+/* Programmafilters: compact, drie regels */
+#program-filters {
+  padding: 9px 12px;
+}
+
+#program-filters .filter-grid,
+#program-filters .program-filter-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 6px;
+}
+
+#program-filters label,
+#program-filters .filter-field {
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+}
+
+#program-filters label > span,
+#program-filters .filter-label {
+  margin: 0;
+  line-height: 1.1;
+}
+
+#program-filters select {
+  height: 36px;
+  min-height: 36px;
+  margin: 0;
+  padding-top: 3px;
+  padding-bottom: 3px;
+}
+
+#reset-filters {
+  width: auto;
+  min-width: auto;
+  height: 36px;
+  min-height: 36px;
+  padding: 0 6px;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  white-space: nowrap;
+  font-weight: 700;
+}
+
+/* Bovenregel: Filters, zoeken en compacte Wis-knop */
+.program-toolbar,
+.program-search-row,
+.program-controls {
+  align-items: center;
+}
+
+.program-toolbar #search-program,
+.program-search-row #search-program,
+.program-controls #search-program {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+@media (max-width: 520px) {
+  #program-filters {
+    padding: 8px 10px;
+  }
+
+  #program-filters label,
+  #program-filters .filter-field {
+    grid-template-columns: 88px minmax(0, 1fr);
+    gap: 7px;
   }
 }
