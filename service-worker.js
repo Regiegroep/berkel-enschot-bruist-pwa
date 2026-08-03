@@ -1,5 +1,5 @@
 /* Berkel-Enschot Bruist PWA — T-007b */
-const CACHE_NAME = "bruist-shell-t007b-v1";
+const CACHE_NAME = "bruist-shell-v1-0-network-first";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -57,28 +57,80 @@ self.addEventListener("fetch", (event) => {
   // Externe gegevens, zoals Google Sheets, blijven altijd netwerkgestuurd.
   if (url.origin !== self.location.origin) return;
 
-  // Voor pagina-navigatie eerst online proberen, daarna offline terugvallen.
-  if (request.mode === "navigate") {
-    event.respondWith(
-      fetch(request).catch(() => caches.match("./index.html"))
-    );
-    return;
-  }
+  const pathname = url.pathname.toLowerCase();
+  const isImage =
+    request.destination === "image" ||
+    /\.(png|jpe?g|webp|gif|svg|ico)$/i.test(pathname);
 
-  // Lokale bestanden: snel uit cache, terwijl op de achtergrond wordt ververst.
-  event.respondWith(
-    caches.match(request).then((cached) => {
-      const network = fetch(request)
+  const isAppCode =
+    request.mode === "navigate" ||
+    request.destination === "script" ||
+    request.destination === "style" ||
+    /\.(html?|js|css|json)$/i.test(pathname);
+
+  // HTML, JavaScript, CSS en manifest: online altijd eerst de nieuwste versie.
+  if (isAppCode) {
+    event.respondWith(
+      fetch(request, { cache: "no-store" })
         .then((response) => {
           if (response && response.ok) {
             const copy = response.clone();
             caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
           }
+
           return response;
         })
-        .catch(() => cached);
+        .catch(async () => {
+          const cached = await caches.match(request);
 
-      return cached || network;
-    })
+          if (cached) {
+            return cached;
+          }
+
+          if (request.mode === "navigate") {
+            return caches.match("./index.html");
+          }
+
+          throw new Error("Geen netwerk en geen cache beschikbaar.");
+        })
+    );
+
+    return;
+  }
+
+  // Afbeeldingen: snel uit cache, op de achtergrond verversen.
+  if (isImage) {
+    event.respondWith(
+      caches.match(request).then((cached) => {
+        const network = fetch(request)
+          .then((response) => {
+            if (response && response.ok) {
+              const copy = response.clone();
+              caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
+            }
+
+            return response;
+          })
+          .catch(() => cached);
+
+        return cached || network;
+      })
+    );
+
+    return;
+  }
+
+  // Overige lokale GET-bestanden: network-first met cache-fallback.
+  event.respondWith(
+    fetch(request)
+      .then((response) => {
+        if (response && response.ok) {
+          const copy = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
+        }
+
+        return response;
+      })
+      .catch(() => caches.match(request))
   );
 });
