@@ -80,6 +80,67 @@ function removeProgramSaved(programId) {
   }
 }
 
+let dataRefreshInProgress = false;
+let lastDataRefreshAt = 0;
+const DATA_REFRESH_MIN_INTERVAL = 30 * 1000;
+
+async function refreshGoogleSheetsData({ force = false, rerender = true } = {}) {
+  const now = Date.now();
+
+  if (dataRefreshInProgress) {
+    return;
+  }
+
+  if (!force && now - lastDataRefreshAt < DATA_REFRESH_MIN_INTERVAL) {
+    return;
+  }
+
+  dataRefreshInProgress = true;
+
+  try {
+    const data = await loadAllGoogleSheetsData();
+
+    setStore({
+      ...data,
+      loading: false,
+      error: null
+    });
+
+    buildRelationIndexes();
+    enrichProgramma();
+    lastDataRefreshAt = Date.now();
+
+    if (rerender) {
+      refreshCurrentScreenAfterDataUpdate();
+    }
+  } catch (error) {
+    console.error("Verversen van Google Sheets mislukt:", error);
+
+    if (!store.programma.length) {
+      setStore({
+        loading: false,
+        error:
+          error.message ||
+          "De programmagegevens konden niet worden geladen."
+      });
+    }
+  } finally {
+    dataRefreshInProgress = false;
+  }
+}
+
+function refreshCurrentScreenAfterDataUpdate() {
+  if (appState.currentScreen === "festivalinfo") {
+    showFestivalInfo();
+    return;
+  }
+
+  renderScreen(appState.currentScreen);
+  updateNavigation(appState.currentScreen);
+  renderInlineIcons();
+  setupCurrentScreenInteractions();
+}
+
 async function initializeApp() {
   setupNavigation();
   renderInlineIcons();
@@ -87,18 +148,10 @@ async function initializeApp() {
   setStore({ loading: true, error: null });
   navigateTo("home");
 
-  try {
-    const data = await loadAllGoogleSheetsData();
-    setStore({ ...data, loading: false, error: null });
-    buildRelationIndexes();
-    enrichProgramma();
-  } catch (error) {
-    console.error(error);
-    setStore({
-      loading: false,
-      error: error.message || "De programmagegevens konden niet worden geladen."
-    });
-  }
+  await refreshGoogleSheetsData({
+    force: true,
+    rerender: false
+  });
 
   if (appState.currentScreen === "programma") {
     navigateTo("programma");
@@ -360,6 +413,16 @@ function renderProgramResultsOnly() {
 }
 
 document.addEventListener("DOMContentLoaded", initializeApp);
+
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "visible") {
+    refreshGoogleSheetsData();
+  }
+});
+
+window.addEventListener("focus", () => {
+  refreshGoogleSheetsData();
+});
 
 let activePlattegrondMap = "buiten";
 

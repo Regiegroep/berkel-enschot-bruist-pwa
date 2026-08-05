@@ -1,11 +1,24 @@
 async function loadConfig() {
-  const response = await fetch("data/config.json", { cache: "no-store" });
-  if (!response.ok) throw new Error(`Configuratie kon niet worden geladen (${response.status}).`);
+  const cacheBuster = Date.now();
+  const response = await fetch(`data/config.json?v=${cacheBuster}`, {
+    cache: "no-store"
+  });
+
+  if (!response.ok) {
+    throw new Error(`Configuratie kon niet worden geladen (${response.status}).`);
+  }
+
   return response.json();
 }
 
 function buildSheetCsvUrl(spreadsheetId, sheetName) {
-  return `https://docs.google.com/spreadsheets/d/${spreadsheetId}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(sheetName)}`;
+  const cacheBuster = Date.now();
+
+  return (
+    `https://docs.google.com/spreadsheets/d/${spreadsheetId}/gviz/tq` +
+    `?tqx=out:csv&sheet=${encodeURIComponent(sheetName)}` +
+    `&_=${cacheBuster}`
+  );
 }
 
 async function fetchSheetRows(spreadsheetId, sheetName) {

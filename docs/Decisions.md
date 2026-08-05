@@ -1,9 +1,13 @@
 # Berkel-Enschot Bruist PWA
 ## Besluitenregister
 
-Dit document bevat de belangrijkste projectbesluiten voor de ontwikkeling van de Berkel-Enschot Bruist PWA.
+**Versie:** 1.0 / R10.00  
+**Status:** Actueel voor v1.0  
+**Bijgewerkt:** augustus 2026
 
-Besluiten in dit document gelden als uitgangspunt voor versie 1.0. Wijzigingen worden alleen doorgevoerd als daar een duidelijke functionele of technische reden voor is.
+Dit document bevat de belangrijkste projectbesluiten voor de ontwikkeling en het beheer van de Berkel-Enschot Bruist PWA.
+
+Besluiten in dit document gelden als uitgangspunt voor versie 1.0 en voor regulier beheer daarna. Wijzigingen worden alleen doorgevoerd als daar een duidelijke functionele of technische reden voor is.
 
 ---
 
@@ -13,7 +17,6 @@ Besluiten in dit document gelden als uitgangspunt voor versie 1.0. Wijzigingen w
 De toepassing wordt ontwikkeld als Progressive Web App (PWA).
 
 **Reden**
-
 - geen publicatie via appstores nodig;
 - direct toegankelijk via een webadres;
 - installeerbaar op een telefoon;
@@ -31,9 +34,7 @@ Definitief
 De PWA wordt primair ontworpen voor gebruik op een smartphone.
 
 **Reden**  
-De meeste bezoekers zullen de app tijdens het festival op hun telefoon gebruiken.
-
-De toepassing moet daarnaast goed functioneren op tablet en desktop.
+De meeste bezoekers gebruiken de PWA tijdens het festival op hun telefoon. Tablet en desktop blijven ondersteund.
 
 **Status**  
 Definitief
@@ -43,14 +44,16 @@ Definitief
 ## ADR-003 – Google Sheets als contentbron
 
 **Besluit**  
-Google Sheets wordt de centrale bron voor de inhoud van de PWA.
+Google Sheets is de centrale bron voor de dynamische inhoud van de PWA.
 
 **Reden**
-
 - het communicatieteam kan zelfstandig wijzigingen doorvoeren;
 - geen apart CMS nodig;
 - geen dubbele invoer;
 - lage beheerlast.
+
+**Nuance**  
+Vaste PWA-afbeeldingen, plattegronden, app-iconen en technische configuratie staan in de repository en niet in Google Sheets.
 
 **Status**  
 Definitief
@@ -63,49 +66,41 @@ Definitief
 Bezoekers hoeven geen account aan te maken en niet in te loggen.
 
 **Reden**
-
-- lagere drempel voor bezoekers;
-- geen beheer van wachtwoorden;
+- lagere drempel;
+- geen wachtwoordbeheer;
 - minder verwerking van persoonsgegevens;
 - lagere technische complexiteit.
 
 **Gevolg**  
-Persoonlijke gegevens en voorkeuren worden niet tussen apparaten gesynchroniseerd.
+Persoonlijke keuzes worden niet tussen apparaten gesynchroniseerd.
 
 **Status**  
 Definitief
 
 ---
 
-## ADR-005 – Lokale opslag
+## ADR-005 – Lokale opslag / Mijn Bruist
 
 **Besluit**  
-Favorieten en Mijn Programma worden lokaal op het apparaat van de bezoeker opgeslagen.
+De keuzes in Mijn Bruist worden lokaal op het apparaat van de bezoeker opgeslagen.
 
 **Reden**
-
 - geen backend nodig;
 - snelle werking;
-- persoonlijke planning blijft beschikbaar na het sluiten van de browser;
-- ondersteuning van offline gebruik.
+- persoonlijke planning blijft op hetzelfde apparaat beschikbaar;
+- past bij het uitgangspunt zonder accounts.
 
 **Status**  
 Definitief
 
 ---
 
-## ADR-006 – Offline ondersteuning
+## ADR-006 – Offline en updategedrag
 
 **Besluit**  
-De belangrijkste festivalinformatie moet na een eerste bezoek zoveel mogelijk offline beschikbaar blijven.
+De PWA gebruikt een service worker en cache om de app robuust te laten functioneren en om eerder geladen onderdelen beschikbaar te houden wanneer de verbinding wegvalt.
 
-**Minimaal offline beschikbaar**
-
-- app-interface;
-- laatst geladen programma;
-- locaties;
-- praktische basisinformatie;
-- Mijn Programma.
+Voor HTML, JavaScript, CSS en manifest wordt online eerst geprobeerd de actuele versie op te halen, met cache als terugval. De PWA controleert op nieuwe versies en kan de bezoeker melden dat een nieuwe versie beschikbaar is.
 
 **Status**  
 Definitief
@@ -115,12 +110,9 @@ Definitief
 ## ADR-007 – Eén bron van waarheid
 
 **Besluit**  
-Festivalinformatie wordt niet op meerdere plaatsen handmatig beheerd.
+Dynamische festivalinformatie wordt niet op meerdere plaatsen handmatig beheerd.
 
-**Reden**  
-Dubbele invoer vergroot de kans op fouten en verouderde informatie.
-
-De Google Spreadsheet is leidend voor alle dynamische content.
+Google Sheets is leidend voor programma- en festivalinformatie. Alleen onderdelen met publicatiestatus **Definitief** worden in het programma aan bezoekers getoond.
 
 **Status**  
 Definitief
@@ -130,15 +122,15 @@ Definitief
 ## ADR-008 – Plattegrond
 
 **Besluit**  
-De PWA gebruikt een eigen interactieve festivalplattegrond als primaire kaartweergave.
+De PWA gebruikt eigen festivalplattegronden als primaire kaartweergave.
 
-**Reden**
-
-- het festival speelt zich af in een compact gebied;
-- een eigen kaart kan locaties en voorzieningen duidelijker tonen;
-- de kaart kan aansluiten op de festivalvormgeving.
-
-Externe navigatie via Google Maps of Apple Maps kan aanvullend worden aangeboden.
+**Uitwerking v1.0**
+- Buiten;
+- Begane grond;
+- Souterrain;
+- locaties met markers;
+- activiteiten per geselecteerde locatie;
+- koppeling van kaart naar programmakaart en omgekeerd.
 
 **Status**  
 Definitief
@@ -150,11 +142,7 @@ Definitief
 **Besluit**  
 Voor versie 1.0 wordt geen apart beheersysteem ontwikkeld.
 
-**Reden**
-
-- Google Sheets vervult de benodigde beheerfunctie;
-- een CMS zou extra kosten en beheer opleveren;
-- de inhoudelijke omvang rechtvaardigt geen afzonderlijk systeem.
+Google Sheets vervult de benodigde beheerfunctie.
 
 **Status**  
 Definitief
@@ -164,15 +152,14 @@ Definitief
 ## ADR-010 – GitHub eenvoudig gebruiken
 
 **Besluit**  
-GitHub wordt gebruikt als centrale opslag voor documentatie en broncode.
+GitHub wordt gebruikt als centrale opslag voor broncode en projectdocumentatie.
 
 **Werkwijze**
-
-- alleen de branch `main`;
-- wijzigingen rechtstreeks committen naar `main`;
-- geen pull requests;
-- geen complexe workflows;
-- voorlopig geen collaborators.
+- branch `main`;
+- kleine, overzichtelijke wijzigingen;
+- lokaal testen met Live Server;
+- daarna commit en push;
+- geen onnodig complexe Git-workflow.
 
 **Reden**  
 De repository moet veiligheid en overzicht bieden zonder onnodige technische complexiteit.
@@ -185,15 +172,7 @@ Definitief
 ## ADR-011 – Geen onnodige functionaliteit
 
 **Besluit**  
-Nieuwe functies worden alleen toegevoegd wanneer zij aantoonbaar bijdragen aan:
-
-- de bezoekerservaring;
-- de bruikbaarheid tijdens het festival;
-- eenvoudiger contentbeheer;
-- betrouwbaarheid of toegankelijkheid.
-
-**Reden**  
-Versie 1.0 moet beheersbaar, stabiel en tijdig uitvoerbaar blijven.
+Nieuwe functies worden alleen toegevoegd wanneer zij aantoonbaar bijdragen aan bezoekerservaring, bruikbaarheid, beheer, betrouwbaarheid of toegankelijkheid.
 
 **Status**  
 Definitief
@@ -202,20 +181,63 @@ Definitief
 
 ## ADR-012 – Buiten scope versie 1.0
 
-De volgende functies maken geen deel uit van versie 1.0:
-
+Niet opgenomen in v1.0:
 - bezoekersaccounts;
-- betalingen;
-- ticketverkoop;
-- uitgebreide reserveringen;
+- betalingen of eigen ticketverkoop;
+- complexe reserveringsmodule;
 - AI-aanbevelingen;
 - synchronisatie tussen apparaten;
 - meertaligheid;
 - complexe routeoptimalisatie;
 - live druktemeting;
-- een apart beheerdersdashboard.
+- apart beheerdersdashboard.
 
-Deze functies kunnen voor latere versies opnieuw worden beoordeeld.
+Externe links voor aanmelden, reserveren of bestellen kunnen wél vanuit een programmakaart worden aangeboden.
+
+**Status**  
+Definitief
+
+---
+
+## ADR-013 – Programmafilters v1.0
+
+**Besluit**  
+De zichtbare filters voor het festival 2026 zijn:
+- Onderdeel;
+- Locatie;
+- Dag.
+
+Categorieën en Tags blijven in Google Sheets en de datastructuur aanwezig en worden op programmakaarten gebruikt, maar zijn in v1.0 niet als zichtbare filters nodig.
+
+**Reden**  
+Een compact filterscherm werkt op mobiel beter en deze drie filters zijn voor dit festival voldoende.
+
+**Status**  
+Definitief
+
+---
+
+## ADR-014 – Beheerbare Festivalinfo-opmaak
+
+**Besluit**  
+Festivalinfo ondersteunt eenvoudige tussenkoppen vanuit Google Sheets via `## Tussenkop` op een eigen regel.
+
+E-mailadressen in Festivalinfo worden klikbaar weergegeven.
+
+**Reden**  
+Hiermee blijft de inhoud beheerbaar in Google Sheets zonder een complex opmaaksysteem.
+
+**Status**  
+Definitief
+
+---
+
+## ADR-015 – Afbeeldingen
+
+**Besluit**  
+Afbeeldingen die via Google Sheets worden geladen, worden bij voorkeur eerst in de Mediabibliotheek van de Berkel-Enschot Bruist-website geplaatst. De URL van de afbeelding wordt vervolgens in Google Sheets opgenomen.
+
+Vaste PWA-afbeeldingen worden in de repository beheerd. Bij vervanging wordt bij voorkeur dezelfde bestandsnaam en verhouding behouden.
 
 **Status**  
 Definitief
